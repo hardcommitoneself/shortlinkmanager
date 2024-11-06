@@ -27,8 +27,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('')
             ->login()
-            ->brandName('SLM')
+            ->brandName('Shortlink Manager')
             ->registration()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])
