@@ -13,13 +13,13 @@
 |
 */
 
-namespace App\Filament\Pages\Websites;
+namespace App\Filament\Pages\Website;
 
 use Filament\Pages\Page;
 
 class Websites extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-trending-up';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static string $view = 'filament.pages.website.websites';
 

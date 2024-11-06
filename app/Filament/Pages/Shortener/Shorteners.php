@@ -12,5 +12,5 @@ class Shorteners extends Page
 
     protected static ?string $navigationGroup = 'Shortener';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 }

@@ -12,5 +12,5 @@ class NewShortener extends Page
 
     protected static ?string $navigationGroup = 'Shortener';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 }
