@@ -48,8 +48,12 @@ class Websites extends Page implements HasTable
             ->description('Websites')
             ->query(Website::myWebsites())
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('url'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('url')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('api_key')
                     ->badge()
                     ->copyable(),
