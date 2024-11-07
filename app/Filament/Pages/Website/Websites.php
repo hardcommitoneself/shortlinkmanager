@@ -50,7 +50,9 @@ class Websites extends Page implements HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('url'),
-                TextColumn::make('api_key'),
+                TextColumn::make('api_key')
+                    ->badge()
+                    ->copyable(),
             ])
             ->headerActions([
                 CreateAction::make()
