@@ -25,7 +25,10 @@ use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Notifications\Notification; 
+use Filament\Tables\Actions\EditAction;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth; 
+use Illuminate\Database\Eloquent\Builder;
 
 class Websites extends Page implements HasTable
 {
@@ -42,7 +45,8 @@ class Websites extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Website::query())
+            ->description('Websites')
+            ->query(Website::myWebsites())
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('url'),
@@ -73,9 +77,20 @@ class Websites extends Page implements HasTable
                     })
             ])
             ->actions([
+                EditAction::make()
+                    ->form([
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('url')
+                            ->required()
+                            ->maxLength(255)
+                    ]),
                 Action::make('delete')
                     ->requiresConfirmation()
-                    ->action(fn (Website $record) => $record->delete())    
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->action(fn (Website $record) => $record->delete())
             ]);
     }
 }
