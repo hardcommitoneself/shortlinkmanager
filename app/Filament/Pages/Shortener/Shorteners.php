@@ -1,5 +1,14 @@
 <?php
 
+/*
+|--------------------------------------------------------------------------
+| List of URL Shorteners
+|--------------------------------------------------------------------------
+|
+| Name, CPM, API Key, Priority, Views, Enable/Disable
+|
+*/
+
 namespace App\Filament\Pages\Shortener;
 
 use Filament\Pages\Page;
