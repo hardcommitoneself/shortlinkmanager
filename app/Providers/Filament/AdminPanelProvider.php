@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('member')
+            ->path('')
             ->login(\Filament\Pages\Auth\Login::class)
             ->brandName('Shortlink Manager')
             ->registration()

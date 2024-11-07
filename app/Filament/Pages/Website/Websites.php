@@ -18,7 +18,6 @@ namespace App\Filament\Pages\Website;
 use App\Models\Website;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
@@ -27,8 +26,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Auth; 
-use Illuminate\Database\Eloquent\Builder;
 
 class Websites extends Page implements HasTable
 {
@@ -73,6 +70,12 @@ class Websites extends Page implements HasTable
                             $website = new Website($data);
 
                             $website->save();
+
+                            Notification::make() 
+                                ->title('Success')
+                                ->success()
+                                ->body('Added sucessfully')
+                                ->send();
                         } catch (\Throwable $th) {
                             Notification::make() 
                                 ->title('Unexpected error')
