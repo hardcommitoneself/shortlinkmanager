@@ -26,7 +26,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('member')
-            ->login()
+            ->login(\Filament\Pages\Auth\Login::class)
             ->brandName('Shortlink Manager')
             ->registration()
             ->passwordReset()
@@ -54,6 +54,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])->colors([
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Blue,
+                'primary' => Color::Teal,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ]);
     }
 }

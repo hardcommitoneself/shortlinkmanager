@@ -25,6 +25,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Notifications\Notification; 
 
 class Websites extends Page implements HasTable
 {
@@ -57,6 +58,19 @@ class Websites extends Page implements HasTable
                             ->required()
                             ->maxLength(255)
                     ])
+                    ->action(function (array $data): void {
+                        try {
+                            $website = new Website($data);
+
+                            $website->save();
+                        } catch (\Throwable $th) {
+                            Notification::make() 
+                                ->title('Unexpected error')
+                                ->danger()
+                                ->body($th->getCode() == 23000 ? 'Duplicated website' : $th->getMessage())
+                                ->send();
+                        }
+                    })
             ])
             ->actions([
                 Action::make('delete')

@@ -16,13 +16,12 @@ return new class extends Migration
 
             $table->string('name');
             $table->string('url');
-            $table->string('original_api_key');
             $table->string('api_key');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             
             $table->timestamps();
 
-            $table->unique(['user_id', 'name', 'url']);
+            $table->unique(['user_id', 'url']);
         });
     }
 
