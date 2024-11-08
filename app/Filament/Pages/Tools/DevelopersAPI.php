@@ -23,7 +23,11 @@ class DevelopersAPI extends Page
 
     protected static ?string $navigationGroup = 'Tools';
 
+    protected static ?string $title = 'Developers API';
+
     protected static ?string $navigationLabel = 'Developers API';
+
+    //protected ?string $subheading = 'Custom Page Subheading';
 
     protected static ?string $slug = 'member/tools/api';
 
