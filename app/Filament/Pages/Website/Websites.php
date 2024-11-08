@@ -34,8 +34,10 @@ class Websites extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static string $view = 'filament.pages.website.websites';
+    
+    protected static ?string $slug = 'member/websites';
 
-    protected static ?string $navigationGroup = 'Websites';
+    //protected static ?string $navigationGroup = 'Websites';
 
     protected static ?int $navigationSort = 1;
 
