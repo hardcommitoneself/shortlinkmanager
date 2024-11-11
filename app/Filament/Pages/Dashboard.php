@@ -22,6 +22,8 @@ class Dashboard extends Page implements HasForms
 
     protected static string $view = 'filament.pages.dashboard';
 
+    protected static ?string $slug = 'member/dashboard';
+
     public ?array $data = [];
 
     public function mount(): void
