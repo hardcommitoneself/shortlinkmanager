@@ -44,28 +44,36 @@ class Websites extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->description('Websites')
+            //->heading('Websites')
+            //->description('A list of users websites')
             ->query(Website::myWebsites())
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('url')
+                    ->label('URL')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('api_key')
+                    ->label('API Key')
                     ->badge()
-                    ->copyable(),
+                    ->copyable()
+                    ->copyMessage('API Key copied'),
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->label('Add a website')
+                    ->icon('heroicon-o-plus')
                     ->form([
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('url')
+                            ->label('URL')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('https://google.com')
                     ])
                     ->action(function (array $data): void {
                         try {
@@ -75,14 +83,16 @@ class Websites extends Page implements HasTable
 
                             Notification::make() 
                                 ->title('Success')
+                                ->icon('heroicon-o-check-circle')
                                 ->success()
-                                ->body('Added sucessfully')
+                                ->body('Website added successfully')
                                 ->send();
                         } catch (\Throwable $th) {
                             Notification::make() 
-                                ->title('Unexpected error')
+                                ->title('Unexpected Error')
+                                ->icon('heroicon-o-exclamation-circle')
                                 ->danger()
-                                ->body($th->getCode() == 23000 ? 'Duplicated website' : $th->getMessage())
+                                ->body($th->getCode() == 23000 ? 'Unable to add, duplicate website.' : $th->getMessage())
                                 ->send();
                         }
                     })
@@ -94,8 +104,10 @@ class Websites extends Page implements HasTable
                             ->required()
                             ->maxLength(255),
                         TextInput::make('url')
+                            ->label('URL')
                             ->required()
                             ->maxLength(255)
+                            ->placeholder('https://google.com')
                     ]),
                 Action::make('delete')
                     ->requiresConfirmation()
