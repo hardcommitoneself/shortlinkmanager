@@ -13,6 +13,10 @@
 |
 */
 
+/* 
+TODO:  Add Error message for duplicate URL on Website Edit
+*/
+
 namespace App\Filament\Pages\Website;
 
 use App\Models\Website;
@@ -59,7 +63,7 @@ class Websites extends Page implements HasTable
                     ->label('API Key')
                     ->badge()
                     ->copyable()
-                    ->copyMessage('API Key copied'),
+                    ->copyMessage('API Key copied')
             ])
             ->headerActions([
                 CreateAction::make()
@@ -71,6 +75,7 @@ class Websites extends Page implements HasTable
                             ->maxLength(255),
                         TextInput::make('url')
                             ->label('URL')
+                            ->url()
                             ->required()
                             ->maxLength(255)
                             ->placeholder('https://google.com')
@@ -82,10 +87,10 @@ class Websites extends Page implements HasTable
                             $website->save();
 
                             Notification::make() 
-                                ->title('Success')
+                                ->title('New website added')
                                 ->icon('heroicon-o-check-circle')
                                 ->success()
-                                ->body('Website added successfully')
+                                ->body($website->name.' added successfully')
                                 ->send();
                         } catch (\Throwable $th) {
                             Notification::make() 
@@ -105,10 +110,17 @@ class Websites extends Page implements HasTable
                             ->maxLength(255),
                         TextInput::make('url')
                             ->label('URL')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('https://google.com')
-                    ]),
+                            ->readOnly()
+                    ])
+                    ->successNotification(null)
+                    ->after(function($record){
+                        Notification::make()
+                            ->title('Website updated')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body($record->name.' updated successfully')
+                            ->send();
+                    }),
                 Action::make('delete')
                     ->requiresConfirmation()
                     ->icon('heroicon-o-trash')
