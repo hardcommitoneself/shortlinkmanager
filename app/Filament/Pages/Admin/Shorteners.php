@@ -17,11 +17,13 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use App\Models\Shortener;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\ToggleColumn;
 
 class Shorteners extends Page implements HasTable
@@ -44,7 +46,8 @@ class Shorteners extends Page implements HasTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->url(fn (Shortener $record) => 'https://' . $record->name, true),
                 TextColumn::make('api_link')
                     ->searchable()
                     ->sortable(),
@@ -101,6 +104,20 @@ class Shorteners extends Page implements HasTable
                                 ->send();
                         }
                     })
+            ])
+            ->actions([
+                EditAction::make()
+                    ->iconButton()
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->modalWidth(MaxWidth::Large)
+                    ->form([
+                        TextInput::make('name'),
+                        TextInput::make('api_link'),
+                        TextInput::make('cpm')
+                            ->prefix('$'),
+                        TextInput::make('views')
+                            ->numeric(),
+                    ])
             ]);
     }
 }
