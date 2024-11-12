@@ -60,10 +60,8 @@ class Shorteners extends Page implements HasTable
                         return $record->setting()->api_key ?? 'Please active this shortener';
                     }),
                 TextColumn::make('views')
-                    ->badge(fn (Shortener $record) => !$record->isSettingExisted())
-                    ->color(fn (Shortener $record) => $record->isSettingExisted() ? '' : 'warning')
                     ->getStateUsing(function (Shortener $record) {
-                        return $record->setting()->views ?? 'Not set yet';
+                        return $record->setting()->views ?? $record->views;
                     }),
             ])
             ->actions([
