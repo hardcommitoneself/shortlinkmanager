@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use App\Models\Shortener;
 
 class ImportSQLCommand extends Command
 {
@@ -20,6 +20,49 @@ class ImportSQLCommand extends Command
      * @var string
      */
     protected $description = 'Import records from an SQL file into a given table';
+
+    public function extractColumns($insertStatement) {
+        $insertStatement = preg_replace('/\s+/', ' ', trim($insertStatement)); 
+
+        // Check if it's a valid INSERT INTO statement
+        if (stripos($insertStatement, 'INSERT INTO') === 0) {
+            // Extract the table name and the columns values part
+            $parts = explode(' VALUES ', $insertStatement);
+
+            $valuesSets = explode('), (', $parts[1]);
+
+            foreach( $valuesSets as $valuesSet ) {
+                $valuesSet = trim($valuesSet, '(');
+                $valuesSet = trim($valuesSet, ')');
+
+                $values = explode(', ', $valuesSet);
+
+                $name = $values[1];
+                $api_link = $values[2];
+                $views = $values[3];
+                $cpm = $values[4];
+                $referral = $values[5];
+                $demo = $values[6];
+                $withdraw = $values[8];
+                $status = trim($values[9], "'") == 'Y' ? true : false;
+
+                $shortener = new Shortener;
+
+                $shortener->name = trim($name, "'");
+                $shortener->api_link = trim($api_link, "'");
+                $shortener->views = (int) $views;
+                $shortener->cpm = $cpm;
+                $shortener->referral = trim($referral, "'");
+                $shortener->demo = trim($demo, "'");
+                $shortener->withdraw = trim($withdraw, "'");
+                $shortener->status = $status;
+
+                $shortener->save();
+            }
+        }
+        
+        return [];
+    }
 
     /**
      * Execute the console command.
@@ -40,32 +83,10 @@ class ImportSQLCommand extends Command
         $statements = explode(";", $sql);
 
         foreach ($statements as $statement) {
-            // Trim the statement and skip if it's empty
-            $statement = trim($statement);
-            if ($statement === '') {
-                continue;
-            }
-            
-            // Modify your SQL statement here to match the column names in your database
-            // For example, if your destination table has 'name' and 'url' instead of 'full_name' and 'website_url':
-            $statement = str_replace('shortlinks', 'shorteners', $statement);
-            $statement = str_replace('apilink', 'api_link', $statement);
-            $statement = str_replace('BMF', 'bmf', $statement);
-            $statement = str_replace('updated', 'updated_at', $statement);
+            $trimmedStatement = trim($statement);
 
-            $this->info($statement);
-
-            $this->info('\n');
-
-            try {
-                DB::statement($statement);
-            } catch (\Exception $e) {
-                $this->error('Error executing statement: ' . $e->getMessage());
-                continue;  // Skip on error and proceed to the next statement
-            }
+            $result = self::extractColumns($trimmedStatement);
         }
-
-        $this->info('Records imported successfully from ' . $filePath);
 
         return 0;
     }

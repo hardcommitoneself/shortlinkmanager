@@ -31,7 +31,7 @@ class Website extends Model
 
         static::creating(function ($website) {
             $website->api_key = (string) Str::uuid();
-            $website->user_id = (int) Auth::user()->id;
+            $website->user_id = Auth::user() ? (int) Auth::user()->id : 1;
         });
     }
 
