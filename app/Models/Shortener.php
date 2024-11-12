@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Shortener extends Model
 {
@@ -24,4 +27,19 @@ class Shortener extends Model
         'withdraw',
         'status'
     ];
+
+    public function settings(): HasMany  
+    {
+        return $this->hasMany(ShortenerSetting::class);
+    }
+
+    public function setting()
+    {
+        return $this->settings()->where('user_id', Auth::user()->id)->first();
+    }
+
+    public function isSettingExisted(): bool
+    {
+        return $this->settings()->count() > 0;
+    }
 }

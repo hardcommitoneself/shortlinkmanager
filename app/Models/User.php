@@ -48,4 +48,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Website::class);
     }
+
+    public function settings(): HasMany  
+    {
+        return $this->hasMany(ShortenerSetting::class);
+    }
+
+    public function numberOfSettings(): int
+    {
+        return $this->settings()->count();
+    }
 }
