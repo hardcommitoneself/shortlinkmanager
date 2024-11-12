@@ -45,12 +45,14 @@ class Shorteners extends Page implements HasTable
                         false => 'gray'
                     }),
                 TextColumn::make('name')
-                    ->searchable()
+                    ->url(fn (Shortener $record) => $record->referral)
+                    ->openUrlInNewTab()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('cpm')
                     ->label('CPM')
-                    ->prefix('$'),
+                    ->money('usd')
+                    ->sortable(),
                 TextColumn::make('api_key')
                     ->label('API Key')
                     ->badge()
@@ -62,7 +64,8 @@ class Shorteners extends Page implements HasTable
                 TextColumn::make('views')
                     ->getStateUsing(function (Shortener $record) {
                         return $record->setting()->views ?? $record->views;
-                    }),
+                    })
+                    ->sortable(),
             ])
             ->actions([
                 Action::make('Active')
