@@ -18,6 +18,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
 
 class Shorteners extends Page implements HasTable
 {
@@ -37,6 +38,12 @@ class Shorteners extends Page implements HasTable
             ->description('Websites')
             ->query(Shortener::query())
             ->columns([
+                IconColumn::make('status')
+                    ->icon('heroicon-o-signal')
+                    ->color(fn (Shortener $record): string => match($record->isSettingExisted()) {
+                        true => $record->setting()->status ? 'primary' : 'warning',
+                        false => 'gray'
+                    }),
                 TextColumn::make('name')
                     ->searchable()
                     ->searchable()
@@ -112,7 +119,7 @@ class Shorteners extends Page implements HasTable
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
-                            ->body($record->setting()->status ? 'Deactivate shortener successfully' : 'Activate shortener successfully')
+                            ->body(!$record->setting()->status ? 'Deactivate shortener successfully' : 'Activate shortener successfully')
                             ->send();
                     })
                     ->visible(fn (Shortener $record) => $record->isSettingExisted()),
