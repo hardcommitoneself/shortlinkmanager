@@ -104,6 +104,8 @@ class Websites extends Page implements HasTable
             ])
             ->actions([
                 EditAction::make()
+                    ->iconButton()
+                    ->icon('heroicon-o-cog-6-tooth')
                     ->form([
                         TextInput::make('name')
                             ->required()
@@ -122,6 +124,7 @@ class Websites extends Page implements HasTable
                             ->send();
                     }),
                 Action::make('delete')
+                    ->iconButton()
                     ->requiresConfirmation()
                     ->icon('heroicon-o-trash')
                     ->color('danger')
