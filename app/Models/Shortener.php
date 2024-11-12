@@ -38,6 +38,11 @@ class Shortener extends Model
         return $this->settings()->where('user_id', Auth::user()->id)->first();
     }
 
+    public function scopeActiveShorteners(Builder $query): Builder
+    {
+        return $query->where('status', true);
+    }
+
     public function isSettingExisted(): bool
     {
         return $this->settings()->count() > 0;

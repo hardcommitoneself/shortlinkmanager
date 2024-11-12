@@ -36,7 +36,7 @@ class Shorteners extends Page implements HasTable
     {
         return $table
             ->description('Websites')
-            ->query(Shortener::query())
+            ->query(Shortener::activeShorteners())
             ->columns([
                 IconColumn::make('status')
                     ->icon('heroicon-o-signal')
