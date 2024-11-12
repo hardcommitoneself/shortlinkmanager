@@ -30,6 +30,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\MaxWidth;
 
 class Websites extends Page implements HasTable
 {
@@ -106,6 +107,7 @@ class Websites extends Page implements HasTable
                 EditAction::make()
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
+                    ->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name')
                             ->required()
