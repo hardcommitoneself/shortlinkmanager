@@ -34,6 +34,8 @@ class Shorteners extends Page implements HasTable
 
     protected static string $view = 'filament.pages.admin.shorteners';
 
+    protected static ?string $slug = 'admin/shorteners';
+
     protected static ?string $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 2;
