@@ -50,7 +50,7 @@ class ImportSQLCommand extends Command
 
                 $shortener->name = trim($name, "'");
                 $shortener->api_link = trim($api_link, "'");
-                $shortener->views = (int) $views;
+                $shortener->views = (int) trim($views, "'");
                 $shortener->cpm = $cpm;
                 $shortener->referral = trim($referral, "'");
                 $shortener->demo = trim($demo, "'");
