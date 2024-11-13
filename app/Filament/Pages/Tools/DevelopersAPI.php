@@ -13,6 +13,7 @@
 namespace App\Filament\Pages\Tools;
 
 use App\Models\Website;
+use Closure;
 use Filament\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -21,7 +22,10 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Actions\Action;
 use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
+use Filament\Actions\SelectAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
@@ -48,12 +52,15 @@ class DevelopersAPI extends Page implements HasForms
 
     public ?array $developerAPIFormData = [];
 
+    public ?int $currentWebsiteId = 1;
+
     public function mount(): void
     {
         $website = Website::myWebsites()->orderBy('id')->first();
 
+        $this->currentWebsiteId = $website->id;
+
         $this->developerAPIFormData = [
-            'id' => $website->id,
             'name' => $website->name,
             'api_key' => $website->api_key,
             'request_link' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias',
@@ -69,34 +76,34 @@ class DevelopersAPI extends Page implements HasForms
         ];
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            SelectAction::make('currentWebsiteId')
+                ->label('Select Website')
+                ->options(Website::myWebsites()->pluck('name', 'id')->toArray())
+        ];
+    }
+
+    public function updatedCurrentWebsiteId()
+    {
+        $website = Website::find($this->currentWebsiteId);
+
+        $this->developerAPIFormData = [
+            'name' => $website->name,
+            'api_key' => $website->api_key,
+            'request_link' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias',
+            'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
+            'request_link_for_result_as_text' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias&format=text',
+        ];
+    }
+
     public function developersAPIForm(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make($this->developerAPIFormData['name'])
-                    ->headerActions([
-                        Action::make('Select Website')
-                            ->form([
-                                Select::make('website')
-                                    ->options(Website::myWebsites()->pluck('name', 'id')->toArray())
-                                    ->default($this->developerAPIFormData['id'])
-                                    ->searchable()
-                            ])
-                            ->action(function (array $data) {
-                                $selectedWebsiteId = $data['website'];
-
-                                $website = Website::find($selectedWebsiteId);
-
-                                $this->developerAPIFormData = [
-                                    'id' => $website->id,
-                                    'name' => $website->name,
-                                    'api_key' => $website->api_key,
-                                    'request_link' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias',
-                                    'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
-                                    'request_link_for_result_as_text' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias&format=text',
-                                ];
-                            })
-                    ])
+                Section::make('Developers API - ' . Website::find($this->currentWebsiteId)->name)
+                    ->reactive()
                     ->schema([
                         TextInput::make('api_key')
                             ->label('Your API Token')
@@ -160,6 +167,59 @@ class DevelopersAPI extends Page implements HasForms
                                     ->icon('heroicon-o-clipboard')
                                     ->action(fn () => $this->dispatch('copy-to-clipboard', ['text' => $this->developerAPIFormData['request_link_for_result_as_text']]))
                             ),
+                        SimpleAlert::make('test-danger-alert')
+                            ->info()
+                            ->description(fn () => new HtmlString(
+                                '
+                                <p style="margin-left: 0.5rem">
+                                    <b>NOTE</b> api & url are required fields and the other fields like alias, format & type are optional.
+                                </p>
+                                '
+                            )),
+                    ]),
+                Section::make('Usage of API')
+                    ->schema([
+                        Tabs::make('Usage of API')
+                            ->tabs([
+                                Tab::make('PHP')
+                                    ->schema([
+                                        SimpleAlert::make('test-danger-alert')
+                                            ->description(fn () => new HtmlString(
+                                                '
+                                                <p class="">
+                                                    To use the API in your PHP application, you need to send a GET request via file_get_contents or cURL. Please check the below sample examples using file_get_contents Using JSON Response
+                                                </p>
+                                                '
+                                            )),
+                                        SimpleAlert::make('test-danger-alert')
+                                            ->description(fn () => new HtmlString(
+                                                '
+                                                    <code>
+                                                            $long_url = urlencode("yourdestinationlink.com"); <br><br>
+
+                                                            $api_token = "d43ff55a92125a01bbc666016db3ce76b9630e36"; <br><br>
+
+                                                            $api_url = "https://get4links.com/api?api={$api_token}&url={$long_url}&alias=CustomAlias"; <br><br>
+
+                                                            $result = @json_decode(file_get_contents($api_url),TRUE); <br><br>
+
+                                                            if($result["status"] === "error") { <br><br>
+
+                                                                echo $result["message"]; <br><br>
+
+                                                            } else { <br><br>
+
+                                                                echo $result["shortenedUrl"]; <br><br>
+
+                                                            }
+                                                        </code>
+                                                '
+                                            )),
+                                    ]),
+                                Tab::make('Curl'),
+                                Tab::make('JavaScript'),
+                                Tab::make('Embeded'),
+                            ])
                     ])
             ])
             ->statePath('developerAPIFormData');
