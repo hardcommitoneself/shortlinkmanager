@@ -184,9 +184,10 @@ class DevelopersAPI extends Page implements HasForms
                                 Tab::make('PHP')
                                     ->schema([
                                         SimpleAlert::make('test-danger-alert')
+                                            ->info()
                                             ->description(fn () => new HtmlString(
                                                 '
-                                                <p class="">
+                                                <p style="margin-left: 0.5rem">
                                                     To use the API in your PHP application, you need to send a GET request via file_get_contents or cURL. Please check the below sample examples using file_get_contents Using JSON Response
                                                 </p>
                                                 '
@@ -195,24 +196,57 @@ class DevelopersAPI extends Page implements HasForms
                                             ->description(fn () => new HtmlString(
                                                 '
                                                     <code>
-                                                            $long_url = urlencode("yourdestinationlink.com"); <br><br>
+                                                        $long_url = urlencode("yourdestinationlink.com"); <br><br>
 
-                                                            $api_token = "d43ff55a92125a01bbc666016db3ce76b9630e36"; <br><br>
+                                                        $api_token = "' . $this->developerAPIFormData['api_key'] . '"; <br><br>
 
-                                                            $api_url = "https://get4links.com/api?api={$api_token}&url={$long_url}&alias=CustomAlias"; <br><br>
+                                                        $api_url = "'. config('app.url') . '/api?api={$api_token}&url={$long_url}&alias=CustomAlias"; <br><br>
 
-                                                            $result = @json_decode(file_get_contents($api_url),TRUE); <br><br>
+                                                        $result = @json_decode(file_get_contents($api_url),TRUE); <br><br>
 
-                                                            if($result["status"] === "error") { <br><br>
+                                                        if($result["status"] === "error") { <br><br>
 
-                                                                echo $result["message"]; <br><br>
+                                                            echo $result["message"]; <br><br>
 
-                                                            } else { <br><br>
+                                                        } else { <br><br>
 
-                                                                echo $result["shortenedUrl"]; <br><br>
+                                                            echo $result["shortenedUrl"]; <br><br>
 
-                                                            }
-                                                        </code>
+                                                        }
+                                                    </code>
+                                                '
+                                            )),
+                                        SimpleAlert::make('test-danger-alert')
+                                            ->info()
+                                            ->description(fn () => new HtmlString(
+                                                '
+                                                <p style="margin-left: 0.5rem">
+                                                    Using Plain Text Response
+                                                </p>
+                                                '
+                                            )),
+                                        SimpleAlert::make('test-danger-alert')
+                                            ->description(fn () => new HtmlString(
+                                                '
+                                                    <code>
+                                                        $long_url = urlencode("yourdestinationlink.com"); <br><br>
+
+                                                        $api_token = "' . $this->developerAPIFormData['api_key'] . '"; <br><br>
+
+                                                        $api_url = "'. config('app.url') . '/api?api={$api_token}&url={$long_url}&alias=CustomAlias&format=text"; <br><br>
+
+                                                        $result = @json_decode(file_get_contents($api_url),TRUE); <br><br>
+
+                                                        if($result["status"] === "error") { <br><br>
+
+                                                            echo $result["message"]; <br><br>
+
+                                                        } else { <br><br>
+
+                                                            echo $result["shortenedUrl"]; <br><br>
+
+                                                        }
+                                                    </code>
                                                 '
                                             )),
                                     ]),
