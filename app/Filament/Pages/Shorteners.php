@@ -110,6 +110,7 @@ class Shorteners extends Page implements HasTable
                             ->visible(fn (Shortener $record) => !$record->isSettingExisted())
                     )
             ])
+            //->defaultSort(fn ($query) => $query->orderBy('api_key', 'asc')->orderBy('cpm', 'desc'))
             ->actions([
                 Action::make('Activate/Deactivate')
                     ->label(fn (Shortener $record) => $record->setting()->status ? 'Disable '.$record->name :  'Enable '.$record->name)

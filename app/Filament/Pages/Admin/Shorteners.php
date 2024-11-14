@@ -19,12 +19,14 @@ use Filament\Tables\Table;
 use App\Models\Shortener;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Support\RawJs;
 
 class Shorteners extends Page implements HasTable
 {
@@ -32,13 +34,13 @@ class Shorteners extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
 
-    protected static string $view = 'filament.pages.admin.shorteners';
-
-    protected static ?string $slug = 'admin/shorteners';
-
     protected static ?string $navigationGroup = 'Admin';
 
     protected static ?int $navigationSort = 2;
+
+    protected static string $view = 'filament.pages.admin.shorteners';
+
+    protected static ?string $slug = 'admin/shorteners';
 
     public function table(Table $table): Table
     {
@@ -47,28 +49,34 @@ class Shorteners extends Page implements HasTable
             ->query(Shortener::query())
             ->columns([
                 TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->url(fn (Shortener $record) => 'https://' . $record->name, true),
-                TextColumn::make('api_link')
+                    ->url(fn (Shortener $record) => $record->referral, true)
                     ->searchable()
                     ->sortable(),
+                //TextColumn::make('api_link')
+                //    ->searchable()
+                //    ->sortable(),
                 TextColumn::make('cpm')
-                    ->prefix('$')
+                    ->label('CPM')
+                    ->money('usd')
                     ->sortable(),
                 TextColumn::make('views')
                     ->sortable(),
+                TextColumn::make('updated_at')
+                    ->sortable(),
                 ToggleColumn::make('status'),
             ])
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
+                    ->icon('heroicon-o-plus')
                     ->modalHeading('Add Shortener')
                     ->form([
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255),
                         TextInput::make('api_link')
+                            ->label('API Link')
                             ->required()
                             ->default('https://example.com/api?api={apikey}&url={url}')
                             ->maxLength(255),
@@ -114,12 +122,24 @@ class Shorteners extends Page implements HasTable
                     ->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name'),
-                        TextInput::make('api_link'),
-                        TextInput::make('cpm')
-                            ->prefix('$'),
+                        TextInput::make('api_link')
+                            ->label('API Key'),
                         TextInput::make('views')
-                            ->numeric(),
+                            ->numeric()
+                            ->default(1)
+                            ->minValue(1),
+                        TextInput::make('cpm')
+                            ->label('CPM')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
+                            //->numeric()
+                            ->default(1)
+                            ->minValue(1),
+                        TextInput::make('referral'),
+                        TextInput::make('demo'),
+                        TextArea::make('withdraw')
                     ])
+                    ->closeModalByClickingAway(false)
             ]);
     }
 }
