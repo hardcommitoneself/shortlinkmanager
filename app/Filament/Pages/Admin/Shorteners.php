@@ -11,22 +11,24 @@
 
 namespace App\Filament\Pages\Admin;
 
-use Filament\Pages\Page;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use App\Models\Shortener;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Support\RawJs;
+use Filament\Pages\Actions\Action;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class Shorteners extends Page implements HasTable
 {
@@ -45,7 +47,7 @@ class Shorteners extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->description('Websites')
+            //->description('Websites')
             ->query(Shortener::query())
             ->columns([
                 TextColumn::make('name')
@@ -119,7 +121,8 @@ class Shorteners extends Page implements HasTable
                 EditAction::make()
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->modalWidth(MaxWidth::Large)
+                    ->modalHeading(fn (Shortener $record) => new HtmlString('Edit <a href="'.str_replace('/ref/AvalonRychmon', '/payout-rates', $record->referral).'" target="_blank">'. $record->name.'</a>'))
+                    //->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name'),
                         TextInput::make('api_link')
