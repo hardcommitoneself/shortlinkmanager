@@ -235,15 +235,11 @@ class DevelopersAPI extends Page implements HasForms
 
                                                         $api_url = "'. config('app.url') . '/api?api={$api_token}&url={$long_url}&alias=CustomAlias&format=text"; <br><br>
 
-                                                        $result = @json_decode(file_get_contents($api_url),TRUE); <br><br>
+                                                        $result = @file_get_contents($api_url); <br><br>
 
-                                                        if($result["status"] === "error") { <br><br>
+                                                        if( $result ){ <br><br>
 
-                                                            echo $result["message"]; <br><br>
-
-                                                        } else { <br><br>
-
-                                                            echo $result["shortenedUrl"]; <br><br>
+                                                            echo $result; <br><br>
 
                                                         }
                                                     </code>
