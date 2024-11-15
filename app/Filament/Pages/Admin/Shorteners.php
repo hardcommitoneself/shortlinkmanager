@@ -27,7 +27,10 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
 
 class Shorteners extends Page implements HasTable
@@ -49,6 +52,7 @@ class Shorteners extends Page implements HasTable
         return $table
             //->description('Websites')
             ->query(Shortener::query())
+            ->striped()
             ->columns([
                 TextColumn::make('name')
                     ->url(fn (Shortener $record) => $record->referral, true)
@@ -63,10 +67,14 @@ class Shorteners extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('views')
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Added')
+                    ->sortable(),
                 TextColumn::make('updated_at')
+                    ->label('Updated')
                     ->sortable(),
             ])
-            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc'))
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
@@ -86,6 +94,7 @@ class Shorteners extends Page implements HasTable
                             ->default(1)
                             ->minValue(1),
                         TextInput::make('cpm')
+                            ->label('CPM')
                             ->prefixIcon('heroicon-o-currency-dollar')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
@@ -118,6 +127,15 @@ class Shorteners extends Page implements HasTable
                         }
                     })
             ])
+            ->filters([
+                SelectFilter::make('status')
+                ->label('Shortener Status')
+                ->options([
+                    '1' => 'Enabled',
+                    '0' => 'Disabled',
+                ])
+                ->default('1')
+            ])
             ->actions([
                 Action::make('activate')
                     ->label(fn (Shortener $record) => $record->status ? 'Disable '.$record->name :  'Enable '.$record->name)
@@ -137,7 +155,7 @@ class Shorteners extends Page implements HasTable
                             ->body(!$record->status ? $record->name.' has been disabled' : $record->name.' has been enabled')
                             ->send();
                     }),
-                EditAction::make()
+                EditAction::make('edit')
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
                     ->modalHeading(fn (Shortener $record) => new HtmlString('Edit <a href="'.str_replace('/ref/AvalonRychmon', '/payout-rates', $record->referral).'" target="_blank">'. $record->name.'</a>'))
@@ -147,10 +165,11 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('api_link')
                             ->label('API Key'),
                         TextInput::make('views')
-                            ->numeric()
+                            //->numeric()
                             ->default(1)
                             ->minValue(1),
                         TextInput::make('cpm')
+                            ->label('CPM')
                             ->prefixIcon('heroicon-o-currency-dollar')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
@@ -160,6 +179,13 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('demo'),
                         TextArea::make('withdraw')
                     ])
+                    ->successNotification(
+                        Notification::make()
+                            ->title('Success')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body(fn (Shortener $record) => $record->name.' has been updated')
+                     )
                     ->closeModalByClickingAway(false)
             ]);
     }
