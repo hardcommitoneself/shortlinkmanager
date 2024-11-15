@@ -36,7 +36,7 @@ class Shorteners extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Shortener::activeShorteners())
+            ->query(Shortener::properShorteners())
             ->columns([
                 IconColumn::make('status')
                     ->icon('heroicon-o-signal')
@@ -110,7 +110,7 @@ class Shorteners extends Page implements HasTable
                             ->visible(fn (Shortener $record) => !$record->isSettingExisted())
                     )
             ])
-            //->defaultSort(fn ($query) => $query->orderBy('api_key', 'asc')->orderBy('cpm', 'desc'))
+            ->defaultSort('settings_count', 'desc')
             ->actions([
                 Action::make('Activate/Deactivate')
                     ->label(fn (Shortener $record) => $record->setting()->status ? 'Disable '.$record->name :  'Enable '.$record->name)
