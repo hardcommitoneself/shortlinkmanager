@@ -45,6 +45,6 @@ class Shortener extends Model
 
     public function isSettingExisted(): bool
     {
-        return $this->settings()->count() > 0;
+        return !!$this->setting();
     }
 }
