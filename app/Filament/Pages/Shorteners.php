@@ -149,19 +149,12 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('api_key')
                             ->label('API Key')
                             ->required()
-                            ->maxLength(255),
-                        TextInput::make('views')
-                            ->numeric()
-                            ->default(1)
-                            ->minValue(1)
-                            ->required()
                             ->maxLength(255)
                     ])
                     ->action(function (Shortener $record, array $data) {
                         $setting = $record->setting();
 
                         $setting->api_key = $data['api_key'];
-                        $setting->views = $data['views'];
 
                         $setting->save();
 
