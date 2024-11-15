@@ -20,7 +20,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\RawJs;
-use Filament\Pages\Actions\Action;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -65,9 +65,8 @@ class Shorteners extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->sortable(),
-                ToggleColumn::make('status'),
             ])
-            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
@@ -87,9 +86,11 @@ class Shorteners extends Page implements HasTable
                             ->default(1)
                             ->minValue(1),
                         TextInput::make('cpm')
+                            ->prefixIcon('heroicon-o-currency-dollar')
+                            ->mask(RawJs::make('$money($input)'))
+                            ->stripCharacters(',')
                             ->numeric()
-                            ->default(1)
-                            ->minValue(1),
+                            ->default(1),
                         TextInput::make('referral'),
                         TextInput::make('demo'),
                         TextInput::make('withdraw'),
@@ -118,6 +119,24 @@ class Shorteners extends Page implements HasTable
                     })
             ])
             ->actions([
+                Action::make('activate')
+                    ->label(fn (Shortener $record) => $record->status ? 'Disable '.$record->name :  'Enable '.$record->name)
+                    ->iconButton()
+                    ->color(fn (Shortener $record) => $record->status ? 'warning' : 'primary')
+                    ->icon(fn (Shortener $record) => $record->status ? 'heroicon-o-signal-slash' : 'heroicon-o-signal')
+                    ->requiresConfirmation()
+                    ->action(function (Shortener $record) {
+                        $record->status = !$record->status;
+
+                        $record->save();
+
+                        Notification::make() 
+                            ->title('Success')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body(!$record->status ? $record->name.' has been disabled' : $record->name.' has been enabled')
+                            ->send();
+                    }),
                 EditAction::make()
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
@@ -132,12 +151,11 @@ class Shorteners extends Page implements HasTable
                             ->default(1)
                             ->minValue(1),
                         TextInput::make('cpm')
-                            ->label('CPM')
+                            ->prefixIcon('heroicon-o-currency-dollar')
                             ->mask(RawJs::make('$money($input)'))
                             ->stripCharacters(',')
-                            //->numeric()
-                            ->default(1)
-                            ->minValue(1),
+                            ->numeric()
+                            ->inputMode('decimal'),
                         TextInput::make('referral'),
                         TextInput::make('demo'),
                         TextArea::make('withdraw')
