@@ -7,13 +7,13 @@
 |
 | 1. Form with Website Name & URL to create a new entry
 |       1a. API Key and URL should be unique
-| 
+|
 | 2. Table listing Website, URL and Generrate API Key
 |       Ex: My Site, https://example.com, TXkgU2l0ZSwgaHR0cHM6Ly9leGFtcGxlLmNvbQ
 |
 */
 
-/* 
+/*
 TODO:  Add Error message for duplicate URL on Website Edit
 */
 
@@ -36,10 +36,10 @@ class Websites extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
+    protected static ?string $navigationIcon = 'heroicon-o-window';
 
     protected static string $view = 'filament.pages.member.websites';
-    
+
     protected static ?string $slug = 'member/websites';
 
     //protected static ?string $navigationGroup = 'Websites';
@@ -87,14 +87,14 @@ class Websites extends Page implements HasTable
 
                             $website->save();
 
-                            Notification::make() 
+                            Notification::make()
                                 ->title('New website added')
                                 ->icon('heroicon-o-check-circle')
                                 ->success()
                                 ->body($website->name.' added successfully')
                                 ->send();
                         } catch (\Throwable $th) {
-                            Notification::make() 
+                            Notification::make()
                                 ->title('Unexpected Error')
                                 ->icon('heroicon-o-exclamation-circle')
                                 ->danger()

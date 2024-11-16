@@ -25,7 +25,7 @@ class Shorteners extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-queue-list';
 
     protected static string $view = 'filament.pages.member.shorteners';
 
@@ -38,13 +38,12 @@ class Shorteners extends Page implements HasTable
         return $table
             ->query(Shortener::properShorteners())
             ->columns([
-                IconColumn::make('status')
-                    ->icon('heroicon-o-signal')
+                TextColumn::make('name')
+                    //->icon('heroicon-o-signal')
                     ->color(fn (Shortener $record): string => match($record->isSettingExisted()) {
                         true => $record->setting()->status ? 'primary' : 'warning',
                         false => 'gray'
-                    }),
-                TextColumn::make('name')
+                    })
                     ->url(fn (Shortener $record) => $record->referral, true)
                     ->searchable()
                     ->sortable(),
@@ -63,7 +62,7 @@ class Shorteners extends Page implements HasTable
                     ->label('API Key')
                     ->badge()
                     ->copyable(fn (Shortener $record) => $record->isSettingExisted())
-                    ->color(fn (Shortener $record) => $record->isSettingExisted() ? 'primary' : 'warning')
+                    ->color(fn (Shortener $record) => $record->isSettingExisted() ? 'gray' : 'warning')
                     ->getStateUsing(function (Shortener $record) {
                        return $record->setting()->api_key ?? 'Add API Key to Enable';
                     })
@@ -73,33 +72,27 @@ class Shorteners extends Page implements HasTable
                     ->action(
                         Action::make('Active')
                             ->modalHeading('Add API Key')
-                            ->modalDescription(function (Shortener $record) { 
-                                return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' ); 
+                            ->modalDescription(function (Shortener $record) {
+                                return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' );
                             })
                             ->modalWidth(MaxWidth::Large)
                             ->form([
                                 TextInput::make('api_key')
                                     ->label('API Key')
                                     ->required()
-                                    ->maxLength(255),
-                                TextInput::make('views')
-                                    ->numeric()
-                                    ->default(1)
-                                    ->minValue(1)
-                                    ->required()
+                                    ->maxLength(255)
                             ])
                             ->action(function (Shortener $record, array $data) {
                                 $setting = new ShortenerSetting;
-            
+
                                 $setting->api_key = $data['api_key'];
-                                $setting->views = $data['views'];
                                 $setting->priority = Auth::user()->numberOfSettings() + 1;
                                 $setting->user_id = Auth::user()->id;
                                 $setting->shortener_id = $record->id;
-            
+
                                 $setting->save();
-            
-                                Notification::make() 
+
+                                Notification::make()
                                     ->title('Success')
                                     ->icon('heroicon-o-check-circle')
                                     ->success()
@@ -110,6 +103,7 @@ class Shorteners extends Page implements HasTable
                             ->visible(fn (Shortener $record) => !$record->isSettingExisted())
                     )
             ])
+            ->striped()
             ->defaultSort('settings_count', 'desc')
             ->actions([
                 Action::make('Activate/Deactivate')
@@ -125,7 +119,7 @@ class Shorteners extends Page implements HasTable
 
                         $setting->save();
 
-                        Notification::make() 
+                        Notification::make()
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
@@ -135,11 +129,11 @@ class Shorteners extends Page implements HasTable
                     ->visible(fn (Shortener $record) => $record->isSettingExisted()),
                 Action::make('Edit')
                     ->modalHeading('Edit API Key')
-                    ->modalDescription(function (Shortener $record) { 
-                        return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' ); 
+                    ->modalDescription(function (Shortener $record) {
+                        return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' );
                     })
                     ->modalWidth(MaxWidth::Large)
-                    ->label(function (Shortener $record) { 
+                    ->label(function (Shortener $record) {
                                 return 'Edit '.$record->name;
                     })
                     ->iconButton()
@@ -158,7 +152,7 @@ class Shorteners extends Page implements HasTable
 
                         $setting->save();
 
-                        Notification::make() 
+                        Notification::make()
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
