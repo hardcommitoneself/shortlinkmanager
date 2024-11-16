@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Member;
 
 use App\Models\ShortenerSetting;
 use Filament\Pages\Page;
@@ -27,7 +27,7 @@ class Shorteners extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
 
-    protected static string $view = 'filament.pages.shorteners';
+    protected static string $view = 'filament.pages.member.shorteners';
 
     protected static ?string $slug = 'member/shorteners';
 

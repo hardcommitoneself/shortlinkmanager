@@ -20,7 +20,7 @@
 |
 */
 
-namespace App\Filament\Pages\Tools;
+namespace App\Filament\Pages\Member\Tools;
 
 use Filament\Pages\Page;
 
@@ -29,7 +29,7 @@ class FullPageScript extends Page
 
     //protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static string $view = 'filament.pages.tools.full-page-script';
+    protected static string $view = 'filament.pages.member.tools.full-page-script';
 
     protected static ?string $slug = 'member/tools/full';
 

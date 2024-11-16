@@ -17,7 +17,7 @@
 TODO:  Add Error message for duplicate URL on Website Edit
 */
 
-namespace App\Filament\Pages\Website;
+namespace App\Filament\Pages\Member;
 
 use App\Models\Website;
 use Filament\Forms\Components\TextInput;
@@ -38,7 +38,7 @@ class Websites extends Page implements HasTable
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static string $view = 'filament.pages.website.websites';
+    protected static string $view = 'filament.pages.member.websites';
     
     protected static ?string $slug = 'member/websites';
 

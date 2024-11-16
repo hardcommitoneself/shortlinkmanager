@@ -13,7 +13,7 @@
 | 
 */
 
-namespace App\Filament\Pages\Tools;
+namespace App\Filament\Pages\Member\Tools;
 
 use Filament\Pages\Page;
 
@@ -22,7 +22,7 @@ class QuickLink extends Page
 
     //protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static string $view = 'filament.pages.tools.quick-link';
+    protected static string $view = 'filament.pages.member.tools.quick-link';
 
     protected static ?string $navigationGroup = 'Tools';
 

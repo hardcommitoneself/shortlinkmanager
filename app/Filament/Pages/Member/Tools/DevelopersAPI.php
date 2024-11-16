@@ -10,7 +10,7 @@
 |
 */
 
-namespace App\Filament\Pages\Tools;
+namespace App\Filament\Pages\Member\Tools;
 
 use App\Models\Website;
 use Closure;
@@ -36,7 +36,7 @@ class DevelopersAPI extends Page implements HasForms
 
     protected static ?string $navigationIcon = '';
 
-    protected static string $view = 'filament.pages.tools.developers-api';
+    protected static string $view = 'filament.pages.member.tools.developers-api';
 
     protected static ?string $navigationGroup = 'Tools';
 

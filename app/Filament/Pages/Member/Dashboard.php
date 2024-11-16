@@ -1,6 +1,6 @@
 <?php
  
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Member;
 
 use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
 use Filament\Actions\Concerns\HasForm;
@@ -20,7 +20,7 @@ class Dashboard extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    protected static string $view = 'filament.pages.dashboard';
+    protected static string $view = 'filament.pages.member.dashboard';
 
     protected static ?string $slug = 'member/dashboard';
 
