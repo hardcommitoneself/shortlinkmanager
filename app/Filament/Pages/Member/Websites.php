@@ -70,6 +70,7 @@ class Websites extends Page implements HasTable
                 CreateAction::make()
                     ->label('Add a website')
                     ->icon('heroicon-o-plus')
+                    ->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name')
                             ->required()
