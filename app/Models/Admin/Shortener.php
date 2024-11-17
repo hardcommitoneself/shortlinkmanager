@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Admin;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +29,7 @@ class Shortener extends Model
         'status'
     ];
 
-    public function settings(): HasMany  
+    public function settings(): HasMany
     {
         return $this->hasMany(ShortenerSetting::class);
     }

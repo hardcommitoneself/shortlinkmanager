@@ -11,7 +11,7 @@
 
 namespace App\Filament\Pages\Admin;
 
-use App\Models\Shortener;
+use App\Models\Admin\Shortener;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -113,13 +113,13 @@ class Shorteners extends Page implements HasTable
 
                             $website->save();
 
-                            Notification::make() 
+                            Notification::make()
                                 ->title('Success')
                                 ->success()
                                 ->body('Added sucessfully')
                                 ->send();
                         } catch (\Throwable $th) {
-                            Notification::make() 
+                            Notification::make()
                                 ->title('Unexpected error')
                                 ->danger()
                                 ->body($th->getCode() == 23000 ? 'Duplicated website' : $th->getMessage())
@@ -148,7 +148,7 @@ class Shorteners extends Page implements HasTable
 
                         $record->save();
 
-                        Notification::make() 
+                        Notification::make()
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
