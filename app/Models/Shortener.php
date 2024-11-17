@@ -58,6 +58,7 @@ class Shortener extends Model
                     ->where('shortener_settings.user_id', Auth::user()->id);
             })
             ->select('shorteners.*')
+            ->where('shorteners.status', true)
             ->selectRaw('COUNT(shortener_settings.id) as settings_count')
             ->groupBy('shorteners.id');
     }
