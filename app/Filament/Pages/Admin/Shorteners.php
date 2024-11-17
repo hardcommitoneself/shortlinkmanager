@@ -11,7 +11,7 @@
 
 namespace App\Filament\Pages\Admin;
 
-use App\Models\Admin\Shortener;
+use App\Models\Shortener;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
