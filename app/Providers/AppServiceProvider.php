@@ -26,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
                 UserMenuItem::make()
                     ->label('Shortener Settings')
                     ->url('/member/dashboard')
+                    //->url(route('filament.pages.member.dashboard'))
                     ->icon('heroicon-o-cog-6-tooth'),
                 // ...
             ]);
