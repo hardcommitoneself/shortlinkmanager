@@ -180,7 +180,7 @@ class Shorteners extends Page implements HasTable
                         TextArea::make('withdraw')
                     ])
                     ->mutateFormDataUsing(function (array $data): array {
-                        $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
+                        $data['withdraw'] = fix_withdraw_format($data['withdraw']);
 
                         return $data;
                     })
@@ -197,7 +197,7 @@ class Shorteners extends Page implements HasTable
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
+        $data['withdraw'] = fix_withdraw_format($data['withdraw']);
 
         return $data;
     }
