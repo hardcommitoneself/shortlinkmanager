@@ -15,10 +15,8 @@ use App\Models\Shortener;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
@@ -74,7 +72,7 @@ class Shorteners extends Page implements HasTable
                     ->label('Updated')
                     ->sortable(),
             ])
-            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'desc'))
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
@@ -159,7 +157,6 @@ class Shorteners extends Page implements HasTable
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
                     ->modalHeading(fn (Shortener $record) => new HtmlString('Edit <a href="'.str_replace('/ref/AvalonRychmon', '/payout-rates', $record->referral).'" target="_blank">'. $record->name.'</a>'))
-                    //->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name'),
                         TextInput::make('api_link')
@@ -178,28 +175,58 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('referral'),
                         TextInput::make('demo'),
                         TextArea::make('withdraw')
+                            ->rows(4),
                     ])
                     ->mutateFormDataUsing(function (array $data): array {
-                        $data['withdraw'] = fix_withdraw_format($data['withdraw']);
+                        $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
+                        $data['updated_at'] = now();
 
                         return $data;
                     })
-                    ->successNotification(
+                    ->successNotification(function (array $data) {
                         Notification::make()
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
-                            ->body(fn (Shortener $record) => $record->name.' has been updated')
-                     )
+                            ->body($data['name'].' has been updated')
+                            ->send();
+                    })
                     ->closeModalByClickingAway(false)
             ]);
     }
 
-    protected function mutateFormDataBeforeSave(array $data): array
+    public function fixWithdrawFormat($withdraw): string
     {
-        $data['withdraw'] = fix_withdraw_format($data['withdraw']);
+        // $5.00 for PayPal withdrawals
+        preg_match_all('/(?P<price>((?:\d{1,3}[,\.]?)+\d{2}))\sfor\s(?P<method>(.*?))\swithdrawals/', $withdraw, $output_array, PREG_SET_ORDER);
 
-        return $data;
+        if($output_array){
+            foreach($output_array as $val){
+                $output[] = '<b>'.$val['method'].':</b> $'.number_format($val['price'], 2, '.', '');
+            }
+
+            sort($output);
+            $withdraw = implode(', ',$output);
+        }
+
+        else {
+
+            // PayPal	$5.000000
+            preg_match_all('/(?P<method>(.*?))[\t]\$?(?P<price>((?:\d{1,4}[,\.]?)+\d{2}))/', $withdraw, $output_array, PREG_SET_ORDER);
+
+            if($output_array){
+                foreach($output_array as $val){
+                    $output[] = '<b>'.trim($val['method']).':</b> $'.number_format($val['price'], 2, '.', '');
+                }
+
+                sort($output);
+                $withdraw = implode(', ',$output);
+            }
+        }
+
+        //$withdraw = 'Test';
+
+        return $withdraw;
     }
 
 }
