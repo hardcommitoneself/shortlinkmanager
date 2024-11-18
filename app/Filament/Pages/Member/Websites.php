@@ -28,6 +28,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
@@ -42,15 +43,11 @@ class Websites extends Page implements HasTable
 
     protected static ?string $slug = 'member/websites';
 
-    //protected static ?string $navigationGroup = 'Websites';
-
     protected static ?int $navigationSort = 1;
 
     public function table(Table $table): Table
     {
         return $table
-            //->heading('Websites')
-            //->description('A list of users websites')
             ->query(Website::myWebsites())
             ->columns([
                 TextColumn::make('name')
@@ -117,21 +114,31 @@ class Websites extends Page implements HasTable
                             ->label('URL')
                             ->readOnly()
                     ])
-                    ->successNotification(null)
-                    ->after(function($record){
+                    ->successNotification(function (array $data) {
                         Notification::make()
                             ->title('Website updated')
                             ->icon('heroicon-o-check-circle')
                             ->success()
-                            ->body($record->name.' updated successfully')
+                            ->body($data['name'].' updated successfully')
                             ->send();
                     }),
-                Action::make('delete')
+                DeleteAction::make('delete')
+                    ->modalHeading(function (Website $record) {
+                        return 'Delete '.$record->name;
+                    })
                     ->iconButton()
-                    ->requiresConfirmation()
                     ->icon('heroicon-o-trash')
                     ->color('danger')
-                    ->action(fn (Website $record) => $record->delete())
+                    ->requiresConfirmation()
+                    ->action(function (Website $record) {
+                        $record->delete();
+                        Notification::make()
+                            ->title('Website deleted')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body( $record->name.' deleted successfully')
+                            ->send();
+                    })
             ]);
     }
 }
