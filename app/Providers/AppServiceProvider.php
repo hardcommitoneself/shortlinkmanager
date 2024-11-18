@@ -24,11 +24,15 @@ class AppServiceProvider extends ServiceProvider
         Filament::serving(function () {
             Filament::registerUserMenuItems([
                 UserMenuItem::make()
-                    ->label('Shortener Settings')
+                    ->label('Dashboard')
                     ->url('/member/dashboard')
                     //->url(route('filament.pages.member.dashboard'))
+                    ->icon('heroicon-o-window'),
+                UserMenuItem::make()
+                    ->label('Settings')
+                    ->url('/member/profile/settings')
+                    //->url(route('filament.pages.member.profile.settings'))
                     ->icon('heroicon-o-cog-6-tooth'),
-                // ...
             ]);
         });
     }
