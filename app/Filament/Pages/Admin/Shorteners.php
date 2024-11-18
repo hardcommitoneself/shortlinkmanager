@@ -74,7 +74,7 @@ class Shorteners extends Page implements HasTable
                     ->label('Updated')
                     ->sortable(),
             ])
-            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'desc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
@@ -179,6 +179,11 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('demo'),
                         TextArea::make('withdraw')
                     ])
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
+
+                        return $data;
+                    })
                     ->successNotification(
                         Notification::make()
                             ->title('Success')
@@ -189,4 +194,12 @@ class Shorteners extends Page implements HasTable
                     ->closeModalByClickingAway(false)
             ]);
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
+
+        return $data;
+    }
+
 }
