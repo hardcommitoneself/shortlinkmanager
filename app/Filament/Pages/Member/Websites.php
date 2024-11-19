@@ -20,7 +20,9 @@ TODO:  Add Error message for duplicate URL on Website Edit
 namespace App\Filament\Pages\Member;
 
 use App\Models\Website;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\View;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -102,9 +104,23 @@ class Websites extends Page implements HasTable
                     })
             ])
             ->actions([
-                EditAction::make()
+                Action::make('setting')
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
+                    ->modalWidth(MaxWidth::Large)
+                    ->form(function (Website $record) {
+                        return [
+                            View::make('filament.components.user-shortener-settings')
+                                ->viewData([
+                                    'website_id' => $record->id
+                                ]),
+                        ];
+                    })
+                    ->modalSubmitAction(false),
+                EditAction::make()
+                    ->iconButton()
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('warning')
                     ->modalWidth(MaxWidth::Large)
                     ->form([
                         TextInput::make('name')
