@@ -13,7 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
+use Filament\Notifications\Notification;
 
 class UserShortenerSetting extends Component implements HasForms, HasTable
 {
@@ -84,6 +84,8 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         false => 'primary'
                     })
                     ->action(function (ShortenerSetting $record) {
+                        $website = Website::find($this->website_id);
+
                         if(WebsiteShortenerSetting::where('shortener_settings_id', $record->id)->where('website_id', $this->website_id)->exists()) {
                             $websiteShortenerSetting = WebsiteShortenerSetting::where('shortener_settings_id', $record->id)->where('website_id', $this->website_id)->first();
 
@@ -112,6 +114,13 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                             $websiteShortenerSetting->status = !$websiteShortenerSetting->status;
 
                             $websiteShortenerSetting->save();
+
+                            Notification::make()
+                                ->title('Success')
+                                ->icon('heroicon-o-check-circle')
+                                ->success()
+                                ->body($record->shortener->name . ($websiteShortenerSetting->status ? ' has been enabled' : ' has been disabled') . ' for ' . $website->name)
+                                ->send();
                         } else {
                             $websiteShortenerSetting = new WebsiteShortenerSetting;
 
@@ -120,6 +129,13 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                             $websiteShortenerSetting->website_id = $this->website_id;
 
                             $websiteShortenerSetting->save();
+
+                            Notification::make()
+                                ->title('Success')
+                                ->icon('heroicon-o-check-circle')
+                                ->success()
+                                ->body($record->shortener->name . ' has been enabled' . ' for ' . $website->name)
+                                ->send();
                         }
                     }),
                 Action::make('upPriority')
@@ -144,6 +160,13 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
 
                         $websiteShortenerSetting->save();
                         $beforeWebsiteShortenerSetting->save();
+
+                        Notification::make()
+                            ->title('Success')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body('Updated priority!')
+                            ->send();
                     }),
                 Action::make('downPriority')
                     ->iconButton()
@@ -167,6 +190,13 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
 
                         $websiteShortenerSetting->save();
                         $afterWebsiteShortenerSetting->save();
+
+                        Notification::make()
+                            ->title('Success')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body('Updated priority!')
+                            ->send();
                     }),
             ]);
     }
