@@ -16,6 +16,7 @@
 namespace App\Filament\Pages\Member\Tools;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class QuickLink extends Page
 {
@@ -30,4 +31,13 @@ class QuickLink extends Page
 
     protected static ?int $navigationSort = 1;
 
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view quick-link'), 403);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view quick-link');
+    }
 }

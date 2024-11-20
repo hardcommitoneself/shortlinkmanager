@@ -34,6 +34,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 
 class Websites extends Page implements HasTable
 {
@@ -46,6 +47,16 @@ class Websites extends Page implements HasTable
     protected static ?string $slug = 'member/websites';
 
     protected static ?int $navigationSort = 1;
+
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view websites'), 403);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view websites');
+    }
 
     public function table(Table $table): Table
     {

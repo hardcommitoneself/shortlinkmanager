@@ -13,6 +13,7 @@ use Filament\Pages\Page;
 use Filament\Forms\Components\RichEditor;
 use Livewire\Livewire;
 use App\Filament\Widgets\SampleChart;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Page implements HasForms
 {
@@ -28,7 +29,14 @@ class Dashboard extends Page implements HasForms
 
     public function mount(): void
     {
+        abort_if(!Auth::user()->can('view dashboard'), 403);
+
         $this->form->fill();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view dashboard');
     }
 
     public function getHeaderWidgets(): array

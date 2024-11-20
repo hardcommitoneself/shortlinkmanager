@@ -23,6 +23,7 @@
 namespace App\Filament\Pages\Member\Tools;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class FullPageScript extends Page
 {
@@ -36,5 +37,14 @@ class FullPageScript extends Page
     protected static ?string $navigationGroup = 'Tools';
 
     protected static ?int $navigationSort = 2;
+    
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view full-page-script'), 403);
+    }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view full-page-script');
+    }
 }

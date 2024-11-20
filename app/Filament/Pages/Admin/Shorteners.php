@@ -30,6 +30,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Auth;
 
 class Shorteners extends Page implements HasTable
 {
@@ -44,6 +45,16 @@ class Shorteners extends Page implements HasTable
     protected static string $view = 'filament.pages.admin.shorteners';
 
     protected static ?string $slug = 'admin/shorteners';
+
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view admin-shorteners'), 403);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view admin-shorteners');
+    }
 
     public function table(Table $table): Table
     {

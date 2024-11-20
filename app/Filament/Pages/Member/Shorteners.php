@@ -33,6 +33,16 @@ class Shorteners extends Page implements HasTable
 
     protected static ?int $navigationSort = 2;
 
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view shorteners'), 403);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view shorteners');
+    }
+
     public function table(Table $table): Table
     {
         return $table

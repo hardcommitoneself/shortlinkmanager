@@ -29,6 +29,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Facades\Auth;
 
 class Users extends Page implements HasTable
 {
@@ -44,6 +45,16 @@ class Users extends Page implements HasTable
     protected static string $view = 'filament.pages.admin.users';
 
     protected static ?string $slug = 'admin/users';
+
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view users'), 403);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view users');
+    }
 
     public function table(Table $table): Table
     {
