@@ -68,6 +68,9 @@ class Shorteners extends Page implements HasTable
                     })
                     ->alignCenter()
                     ->sortable(),
+                TextColumn::make('tags')
+                    ->badge()
+                    ->separator(','),
                 TextColumn::make('api_key')
                     ->label('API Key')
                     ->badge()

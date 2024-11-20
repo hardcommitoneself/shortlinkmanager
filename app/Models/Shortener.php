@@ -27,7 +27,12 @@ class Shortener extends Model
         'demo',
         'withdraw',
         'status',
-        'updated_at'
+        'updated_at',
+        'tags'
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
     ];
 
     public function settings(): HasMany

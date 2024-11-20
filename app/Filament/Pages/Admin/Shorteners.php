@@ -12,6 +12,7 @@
 namespace App\Filament\Pages\Admin;
 
 use App\Models\Shortener;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -21,6 +22,7 @@ use Filament\Support\RawJs;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -76,6 +78,9 @@ class Shorteners extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('views')
                     ->sortable(),
+                TextColumn::make('tags')
+                    ->badge()
+                    ->separator(','),
                 TextColumn::make('created_at')
                     ->label('Added')
                     ->sortable(),
@@ -83,7 +88,7 @@ class Shorteners extends Page implements HasTable
                     ->label('Updated')
                     ->sortable(),
             ])
-            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'asc'))
+            ->defaultSort(fn ($query) => $query->orderBy('status', 'desc')->orderBy('updated_at', 'desc'))
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Shortener')
@@ -187,6 +192,13 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('demo'),
                         TextArea::make('withdraw')
                             ->rows(4),
+                        Select::make('tags')
+                            ->options([
+                                'active' => 'Active',
+                                'scam' => 'Scam',
+                                'closed' => 'Closed'
+                            ])
+                            ->multiple()
                     ])
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['withdraw'] = $this->fixWithdrawFormat($data['withdraw']);
