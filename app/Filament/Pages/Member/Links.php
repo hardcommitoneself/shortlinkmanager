@@ -11,6 +11,7 @@
 namespace App\Filament\Pages\Member;
 
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 
 class Links extends Page
 {
@@ -23,6 +24,14 @@ class Links extends Page
 
     protected static ?string $slug = 'member/links';
 
+    public function mount()
+    {
+        abort_if(!Auth::user()->can('view links'), 403);
+    }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view links');
+    }
 }
 

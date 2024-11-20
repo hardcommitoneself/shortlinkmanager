@@ -29,6 +29,7 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class DevelopersAPI extends Page implements HasForms
 {
@@ -56,17 +57,36 @@ class DevelopersAPI extends Page implements HasForms
 
     public function mount(): void
     {
-        $website = Website::myWebsites()->orderBy('id')->first();
+        abort_if(!Auth::user()->can('view developers-api'), 403);
 
-        $this->currentWebsiteId = $website->id;
+        try {
+            $website = Website::myWebsites()->orderBy('id')->firstOrFail();
 
-        $this->developerAPIFormData = [
-            'name' => $website->name,
-            'api_key' => $website->api_key,
-            'request_link' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias',
-            'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
-            'request_link_for_result_as_text' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias&format=text',
-        ];
+            $this->currentWebsiteId = $website->id;
+
+            $this->developerAPIFormData = [
+                'name' => $website->name,
+                'api_key' => $website->api_key,
+                'request_link' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias',
+                'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
+                'request_link_for_result_as_text' => config('app.url') . '/api?api=' . $website->api_key . '&url=yourdestinationlink.com&alias=CustomAlias&format=text',
+            ];
+        } catch (\Throwable $th) {
+            $this->currentWebsiteId = null;
+
+            $this->developerAPIFormData = [
+                'name' => 'Undefined',
+                'api_key' => 'Undefined',
+                'request_link' => config('app.url') . '/api?api=' . 'undefined' . '&url=yourdestinationlink.com&alias=CustomAlias',
+                'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
+                'request_link_for_result_as_text' => config('app.url') . '/api?api=' . 'undefined' . '&url=yourdestinationlink.com&alias=CustomAlias&format=text',
+            ];
+        }
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('view developers-api');
     }
 
     public function getForms(): array
@@ -102,7 +122,7 @@ class DevelopersAPI extends Page implements HasForms
     {
         return $form
             ->schema([
-                Section::make('Developers API - ' . Website::find($this->currentWebsiteId)->name)
+                Section::make('Developers API - ' . Website::find($this->currentWebsiteId)?->name ?? null)
                     ->reactive()
                     ->schema([
                         TextInput::make('api_key')
