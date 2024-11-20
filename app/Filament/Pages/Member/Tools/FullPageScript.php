@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\Auth;
 
 class FullPageScript extends Page
 {
-
     //protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static string $view = 'filament.pages.member.tools.full-page-script';
@@ -37,10 +36,10 @@ class FullPageScript extends Page
     protected static ?string $navigationGroup = 'Tools';
 
     protected static ?int $navigationSort = 2;
-    
+
     public function mount()
     {
-        abort_if(!Auth::user()->can('view full-page-script'), 403);
+        abort_if(! Auth::user()->can('view full-page-script'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool

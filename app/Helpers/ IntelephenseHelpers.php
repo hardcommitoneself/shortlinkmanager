@@ -7,8 +7,8 @@ interface Authenticatable
     /**
      * Get the name of the unique identifier for the user.
      *
-     * @param array|string $permissions
-     * @return boolean
+     * @param  array|string  $permissions
+     * @return bool
      */
     public function can($permissions);
 

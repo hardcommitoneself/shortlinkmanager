@@ -20,7 +20,7 @@ class ShortenerSetting extends Model
         return $this->belongsTo(Shortener::class);
     }
 
-    public function user():BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
@@ -32,23 +32,22 @@ class ShortenerSetting extends Model
 
     public function scopeMyShorteners(Builder $query): Builder
     {
-        return $query->where("user_id", Auth::user()->id);
+        return $query->where('user_id', Auth::user()->id);
     }
 
     public function scopeProperShortenerSettings(Builder $query, int $website_id): Builder
     {
         return $query
-            ->leftJoin('website_shortener_settings', fn (JoinClause $join) => 
-                $join
-                    ->on('website_shortener_settings.shortener_settings_id','=','shortener_settings.id')
-                    ->where("website_shortener_settings.website_id", $website_id)
+            ->leftJoin('website_shortener_settings', fn (JoinClause $join) => $join
+                ->on('website_shortener_settings.shortener_settings_id', '=', 'shortener_settings.id')
+                ->where('website_shortener_settings.website_id', $website_id)
             )
-            ->where("user_id", Auth::user()->id)
+            ->where('user_id', Auth::user()->id)
             ->select([
                 'shortener_settings.id as id',
                 'shortener_settings.shortener_id as shortener_id',
                 DB::raw('IFNULL(website_shortener_settings.status, false) as status'),
-                DB::raw('IFNULL(website_shortener_settings.priority, 1000000) as priority')
+                DB::raw('IFNULL(website_shortener_settings.priority, 1000000) as priority'),
             ]);
     }
 }

@@ -2,23 +2,18 @@
 
 namespace App\Filament\Pages\Member;
 
-use App\Models\ShortenerSetting;
-use Filament\Pages\Page;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use App\Models\Shortener;
-use Filament\Tables\Actions\CreateAction;
+use App\Models\ShortenerSetting;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Columns\ToggleColumn;
-use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
 class Shorteners extends Page implements HasTable
@@ -35,7 +30,7 @@ class Shorteners extends Page implements HasTable
 
     public function mount()
     {
-        abort_if(!Auth::user()->can('view shorteners'), 403);
+        abort_if(! Auth::user()->can('view shorteners'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -50,7 +45,7 @@ class Shorteners extends Page implements HasTable
             ->columns([
                 TextColumn::make('name')
                     //->icon('heroicon-o-signal')
-                    ->color(fn (Shortener $record): string => match($record->isSettingExisted()) {
+                    ->color(fn (Shortener $record): string => match ($record->isSettingExisted()) {
                         true => $record->setting()->status ? 'primary' : 'warning',
                         false => 'gray'
                     })
@@ -77,7 +72,7 @@ class Shorteners extends Page implements HasTable
                     ->copyable(fn (Shortener $record) => $record->isSettingExisted())
                     ->color(fn (Shortener $record) => $record->isSettingExisted() ? 'gray' : 'warning')
                     ->getStateUsing(function (Shortener $record) {
-                       return $record->setting()->api_key ?? 'Add API Key to Enable';
+                        return $record->setting()->api_key ?? 'Add API Key to Enable';
                     })
                     ->icon(fn (Shortener $record) => $record->isSettingExisted() ? null : 'heroicon-o-cog-6-tooth')
                     ->limit(21)
@@ -86,14 +81,14 @@ class Shorteners extends Page implements HasTable
                         Action::make('Active')
                             ->modalHeading('Add API Key')
                             ->modalDescription(function (Shortener $record) {
-                                return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' );
+                                return new HtmlString('Get your API Key from <b><a href="'.$record->referral.'" target="_blank">'.$record->name.'</a></b>\'s Developers API page.');
                             })
                             ->modalWidth(MaxWidth::Large)
                             ->form([
                                 TextInput::make('api_key')
                                     ->label('API Key')
                                     ->required()
-                                    ->maxLength(255)
+                                    ->maxLength(255),
                             ])
                             ->action(function (Shortener $record, array $data) {
                                 $setting = new ShortenerSetting;
@@ -113,14 +108,14 @@ class Shorteners extends Page implements HasTable
                                     ->send();
                             })
                             ->closeModalByClickingAway(false)
-                            ->visible(fn (Shortener $record) => !$record->isSettingExisted())
-                    )
+                            ->visible(fn (Shortener $record) => ! $record->isSettingExisted())
+                    ),
             ])
             ->striped()
             ->defaultSort('settings_count', 'desc')
             ->actions([
                 Action::make('Activate/Deactivate')
-                    ->label(fn (Shortener $record) => $record->setting()->status ? 'Disable '.$record->name :  'Enable '.$record->name)
+                    ->label(fn (Shortener $record) => $record->setting()->status ? 'Disable '.$record->name : 'Enable '.$record->name)
                     ->iconButton()
                     ->color(fn (Shortener $record) => $record->setting()->status ? 'warning' : 'primary')
                     ->icon(fn (Shortener $record) => $record->setting()->status ? 'heroicon-o-signal-slash' : 'heroicon-o-signal')
@@ -128,7 +123,7 @@ class Shorteners extends Page implements HasTable
                     ->action(function (Shortener $record) {
                         $setting = $record->setting();
 
-                        $setting->status = !$setting->status;
+                        $setting->status = ! $setting->status;
 
                         $setting->save();
 
@@ -136,18 +131,18 @@ class Shorteners extends Page implements HasTable
                             ->title('Success')
                             ->icon('heroicon-o-check-circle')
                             ->success()
-                            ->body(!$record->setting()->status ? $record->name.' has been disabled' : $record->name.' has been enabled')
+                            ->body(! $record->setting()->status ? $record->name.' has been disabled' : $record->name.' has been enabled')
                             ->send();
                     })
                     ->visible(fn (Shortener $record) => $record->isSettingExisted()),
                 Action::make('Edit')
                     ->modalHeading('Edit API Key')
                     ->modalDescription(function (Shortener $record) {
-                        return new HtmlString('Get your API Key from <b><a href="'. $record->referral .'" target="_blank">'. $record->name .'</a></b>\'s Developers API page.' );
+                        return new HtmlString('Get your API Key from <b><a href="'.$record->referral.'" target="_blank">'.$record->name.'</a></b>\'s Developers API page.');
                     })
                     ->modalWidth(MaxWidth::Large)
                     ->label(function (Shortener $record) {
-                                return 'Edit '.$record->name;
+                        return 'Edit '.$record->name;
                     })
                     ->iconButton()
                     ->icon('heroicon-o-cog-6-tooth')
@@ -156,7 +151,7 @@ class Shorteners extends Page implements HasTable
                         TextInput::make('api_key')
                             ->label('API Key')
                             ->required()
-                            ->maxLength(255)
+                            ->maxLength(255),
                     ])
                     ->action(function (Shortener $record, array $data) {
                         $setting = $record->setting();
@@ -172,7 +167,7 @@ class Shorteners extends Page implements HasTable
                             ->body('Update this setting successfully')
                             ->send();
                     })
-                    ->visible(fn (Shortener $record) => $record->isSettingExisted())
+                    ->visible(fn (Shortener $record) => $record->isSettingExisted()),
             ]);
     }
 }

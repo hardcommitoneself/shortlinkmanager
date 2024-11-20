@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Shortener;
+use Illuminate\Console\Command;
 
 class ImportSQLCommand extends Command
 {
@@ -21,8 +21,9 @@ class ImportSQLCommand extends Command
      */
     protected $description = 'Import records from an SQL file into a given table';
 
-    public function extractColumns($insertStatement) {
-        $insertStatement = preg_replace('/\s+/', ' ', trim($insertStatement)); 
+    public function extractColumns($insertStatement)
+    {
+        $insertStatement = preg_replace('/\s+/', ' ', trim($insertStatement));
 
         // Check if it's a valid INSERT INTO statement
         if (stripos($insertStatement, 'INSERT INTO') === 0) {
@@ -31,7 +32,7 @@ class ImportSQLCommand extends Command
 
             $valuesSets = explode('), (', $parts[1]);
 
-            foreach( $valuesSets as $valuesSet ) {
+            foreach ($valuesSets as $valuesSet) {
                 $valuesSet = trim($valuesSet, '(');
                 $valuesSet = trim($valuesSet, ')');
 
@@ -60,7 +61,7 @@ class ImportSQLCommand extends Command
                 $shortener->save();
             }
         }
-        
+
         return [];
     }
 
@@ -71,8 +72,8 @@ class ImportSQLCommand extends Command
     {
         $filePath = $this->argument('file');
 
-        if (!file_exists($filePath)) {
-            $this->error('File does not exist: ' . $filePath);
+        if (! file_exists($filePath)) {
+            $this->error('File does not exist: '.$filePath);
 
             return 1;
         }
@@ -80,7 +81,7 @@ class ImportSQLCommand extends Command
         $sql = file_get_contents($filePath);
 
         // Split the SQL file into individual statements
-        $statements = explode(";", $sql);
+        $statements = explode(';', $sql);
 
         foreach ($statements as $statement) {
             $trimmedStatement = trim($statement);

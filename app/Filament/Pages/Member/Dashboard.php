@@ -1,18 +1,14 @@
 <?php
- 
+
 namespace App\Filament\Pages\Member;
 
+use App\Filament\Widgets\SampleChart;
 use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
-use Filament\Actions\Concerns\HasForm;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
-use Filament\Forms\Components\RichEditor;
-use Livewire\Livewire;
-use App\Filament\Widgets\SampleChart;
 use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends Page implements HasForms
@@ -29,7 +25,7 @@ class Dashboard extends Page implements HasForms
 
     public function mount(): void
     {
-        abort_if(!Auth::user()->can('view dashboard'), 403);
+        abort_if(! Auth::user()->can('view dashboard'), 403);
 
         $this->form->fill();
     }
@@ -61,11 +57,11 @@ class Dashboard extends Page implements HasForms
                         SimpleAlert::make('test-info-alert')
                             ->info()
                             ->title('Hoorraayy! Your request has been approved! 🎉')
-                            ->description('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.')
+                            ->description('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
                     ]),
                 Section::make('Latest updates')
-                    ->description('Latest updates')
+                    ->description('Latest updates'),
             ])
-            ->statePath('data');    
+            ->statePath('data');
     }
 }

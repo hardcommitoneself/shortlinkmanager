@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use Illuminate\Auth\Access\Response;
 use App\Models\Shortener;
 use App\Models\User;
 

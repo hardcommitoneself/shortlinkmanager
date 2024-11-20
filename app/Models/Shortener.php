@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Auth;
 
 class Shortener extends Model
 {
@@ -28,7 +28,7 @@ class Shortener extends Model
         'withdraw',
         'status',
         'updated_at',
-        'tags'
+        'tags',
     ];
 
     protected $casts = [
@@ -52,7 +52,7 @@ class Shortener extends Model
 
     public function isSettingExisted(): bool
     {
-        return !!$this->setting();
+        return (bool) $this->setting();
     }
 
     public function scopeProperShorteners(Builder $query): Builder

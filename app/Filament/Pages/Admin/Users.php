@@ -11,29 +11,21 @@
 namespace App\Filament\Pages\Admin;
 
 use App\Models\User;
-use Closure;
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
 class Users extends Page implements HasTable
 {
-
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
@@ -48,7 +40,7 @@ class Users extends Page implements HasTable
 
     public function mount()
     {
-        abort_if(!Auth::user()->can('view users'), 403);
+        abort_if(! Auth::user()->can('view users'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -63,15 +55,15 @@ class Users extends Page implements HasTable
             ->striped()
             ->columns([
                 TextColumn::make('id')
-                ->label('ID')
-                ->searchable()
-                ->sortable(),
+                    ->label('ID')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
-                ->searchable()
-                ->sortable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('email')
-                ->searchable()
-                ->sortable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('created_at'),
             ])
             ->headerActions([
@@ -107,15 +99,14 @@ class Users extends Page implements HasTable
                                 ->body('Added sucessfully')
                                 ->send();
 
-                        }
-                        catch (\Throwable $th) {
+                        } catch (\Throwable $th) {
                             Notification::make()
                                 ->title('Unexpected error')
                                 ->danger()
                                 ->body($th->getCode() == 23000 ? 'Duplicated User' : $th->getMessage())
                                 ->send();
                         }
-                    })
+                    }),
             ])
             ->filters([
                 //
@@ -143,10 +134,8 @@ class Users extends Page implements HasTable
                             ->icon('heroicon-o-check-circle')
                             ->success()
                             ->body(fn (User $record) => $record->name.' has been updated')
-                     )
-                    ->closeModalByClickingAway(false)
+                    )
+                    ->closeModalByClickingAway(false),
             ]);
     }
-
 }
-
