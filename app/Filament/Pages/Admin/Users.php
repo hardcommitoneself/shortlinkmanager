@@ -48,12 +48,12 @@ class Users extends Page implements HasTable
 
     public function mount()
     {
-        abort_if(!Auth::user()->can('view admin-users'), 403);
+        abort_if(!Auth::user()->can('view users'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('view admin-users');
+        return Auth::user()->can('view users');
     }
 
     public function table(Table $table): Table
