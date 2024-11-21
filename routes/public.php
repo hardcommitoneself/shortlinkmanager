@@ -17,8 +17,8 @@ use App\Http\Controllers\ShortLinkController;
 
 Route::get('/shorten', [ShortLinkController::class, 'create'])->name('shorten');
 Route::get('/r/{shortUrl}', [ShortLinkController::class, 'redirect'])->name('redirect-shorturl');
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/test', function () {
+    return json_encode([
+        'message' => 'test'
+    ]);
 });
-

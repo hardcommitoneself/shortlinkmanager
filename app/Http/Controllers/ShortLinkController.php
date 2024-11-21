@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\ShortLink;
 use App\Models\Website;
 use Illuminate\Support\Str;
-use Illuminate\Routing\Controller;
 
 class ShortLinkController extends Controller
 {
@@ -15,12 +14,6 @@ class ShortLinkController extends Controller
         $apiKey = $request->query('api');
         $url = $request->query('url');
         $alias = $request->query('alias');
-
-        $request->validate([
-            'api' => 'required|string',
-            'url' => 'required|url',
-            'alias' => 'nullable|string|max:50',
-        ]);
 
         // check if the api key is validate
         if(!Website::where('api_key', $apiKey)->exists()) {
@@ -46,10 +39,13 @@ class ShortLinkController extends Controller
             $shortUrl = Str::random(6);
         } while (ShortLink::where('short_url', $shortUrl)->exists());
 
-        // ShortLink::create([
-        //     'short_url' => $shortUrl,
-        //     'original_url' => $request->original_url,
-        // ]);
+        $shortLink = new ShortLink;
+
+        $shortLink->website_id = $website->id;
+        $shortLink->short_url = $shortUrl;
+        $shortLink->original_url = $url;
+
+        $shortLink->save();
 
         return response()->json([
             'status' => 'success',
@@ -60,11 +56,20 @@ class ShortLinkController extends Controller
     public function redirect($shortUrl)
     {
         // Find the original URL based on the short URL
-        $link = ShortLink::where('short_url', $shortUrl)->first();
+        $shortLink = ShortLink::where('short_url', $shortUrl)->first();
+        $website = $shortLink->website;
+        $websiteShortenerSettings = $website->websiteShortenerSettings;
 
-        if ($link) {
-            // Redirect to the original URL
-            return redirect($link->original_url);
+        foreach ($websiteShortenerSettings as $websiteShortenerSetting => $value) {
+            $countOfVisits = $websiteShortenerSetting->count_visits;
+            $views = $websiteShortenerSetting->shortener_setting->views;
+
+            if($countOfVisits > $views) {
+                continue;
+            }
+
+            $shortenerAPIKey = $websiteShortenerSetting->shortener_setting->api_key;
+            
         }
 
         return response()->json(['message' => 'Not Found'], 404);
