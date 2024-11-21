@@ -13,6 +13,7 @@
 namespace App\Filament\Pages\Member\Tools;
 
 use App\Models\Website;
+use App\Actions\SectionHeaderSelectAction;
 use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
 use Filament\Actions\SelectAction;
 use Filament\Forms\Components\Actions\Action;
@@ -97,9 +98,9 @@ class DevelopersAPI extends Page implements HasForms
     protected function getHeaderActions(): array
     {
         return [
-            SelectAction::make('currentWebsiteId')
-                ->label('Select Website')
-                ->options(Website::myWebsites()->pluck('name', 'id')->toArray()),
+            // SelectAction::make('currentWebsiteId')
+            //     ->label('Select Website')
+            //     ->options(Website::myWebsites()->pluck('name', 'id')->toArray())
         ];
     }
 
@@ -120,7 +121,12 @@ class DevelopersAPI extends Page implements HasForms
     {
         return $form
             ->schema([
-                Section::make('Developers API - '.Website::find($this->currentWebsiteId)?->name ?? null)
+                Section::make('Developers API - ' . Website::find($this->currentWebsiteId)?->name ?? null)
+                    ->headerActions([
+                        SectionHeaderSelectAction::make('currentWebsiteId')
+                            ->label('Select Website')
+                            ->options(Website::myWebsites()->pluck('name', 'id')->toArray())
+                        ])
                     ->reactive()
                     ->schema([
                         TextInput::make('api_key')
@@ -136,8 +142,8 @@ class DevelopersAPI extends Page implements HasForms
                             ->description(fn () => new HtmlString(
                                 '
                                 <p class="">
-                                    For developers SLM prepared <b>API</b> which returns responses in <b>JSON</b> or <b>TEXT</b> formats. <br> 
-                                    Currently there is one method which can be used to shorten links on behalf of your account. <br> 
+                                    For developers SLM prepared <b>API</b> which returns responses in <b>JSON</b> or <b>TEXT</b> formats. <br>
+                                    Currently there is one method which can be used to shorten links on behalf of your account. <br>
                                     All you have to do is to send a <b>GET</b> request with your API token and URL Like the following:
                                 </p>
                                 '
@@ -193,7 +199,7 @@ class DevelopersAPI extends Page implements HasForms
                                     <b>NOTE</b> api & url are required fields and the other fields like alias, format & type are optional.
                                 </p>
                                 '
-                            )),
+                            ))
                     ]),
                 Section::make('Usage of API')
                     ->schema([
