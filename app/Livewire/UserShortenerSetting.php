@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -29,6 +30,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name')
                     ->label('Shortener')
+                    ->width('50%')
                     ->getStateUsing(fn (ShortenerSetting $record) => $record->shortener->name)
                     ->color(fn (ShortenerSetting $record) => match (
                         WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
@@ -46,6 +48,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         },
                         false => 'gray'
                     }),
+                TextInputColumn::make('views')
             ])
             ->defaultSort('priority')
             ->actions([
