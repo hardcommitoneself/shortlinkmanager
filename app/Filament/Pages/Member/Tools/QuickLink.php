@@ -10,7 +10,7 @@
 | https://example.com/quick?api=Website-API-KEY&url=destinationlink.com
 |
 | https://get4links.com/member/tools/quick
-| 
+|
 */
 
 namespace App\Filament\Pages\Member\Tools;
@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 
 class QuickLink extends Page
 {
-
     //protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static string $view = 'filament.pages.member.tools.quick-link';
@@ -33,7 +32,7 @@ class QuickLink extends Page
 
     public function mount()
     {
-        abort_if(!Auth::user()->can('view quick-link'), 403);
+        abort_if(! Auth::user()->can('view quick-link'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool

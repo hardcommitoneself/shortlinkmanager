@@ -5,20 +5,20 @@ namespace App\Livewire;
 use App\Models\ShortenerSetting;
 use App\Models\Website;
 use App\Models\WebsiteShortenerSetting;
-use Livewire\Component;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Filament\Notifications\Notification;
+use Livewire\Component;
 
 class UserShortenerSetting extends Component implements HasForms, HasTable
 {
-    use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithTable;
 
     public $website_id;
 
@@ -27,10 +27,10 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
         return $table
             ->query(ShortenerSetting::properShortenerSettings($this->website_id))
             ->columns([
-                TextColumn::make("name")
+                TextColumn::make('name')
                     ->label('Shortener')
                     ->getStateUsing(fn (ShortenerSetting $record) => $record->shortener->name)
-                    ->color(fn (ShortenerSetting $record) => match(
+                    ->color(fn (ShortenerSetting $record) => match (
                         WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                             ->where('website_id', $this->website_id)
                             ->exists()
@@ -45,18 +45,18 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                             false => 'gray'
                         },
                         false => 'gray'
-                    })
+                    }),
             ])
             ->defaultSort('priority')
             ->actions([
                 Action::make('Activate/Deactivate')
                     ->iconButton()
-                    ->icon(fn (ShortenerSetting $record) => match(
+                    ->icon(fn (ShortenerSetting $record) => match (
                         WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                             ->where('website_id', $this->website_id)
                             ->exists()
                     ) {
-                        true => match(
+                        true => match (
                             WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                                 ->where('website_id', $this->website_id)
                                 ->first()
@@ -67,12 +67,12 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         },
                         false => 'heroicon-o-signal'
                     })
-                    ->color(fn (ShortenerSetting $record) => match(
+                    ->color(fn (ShortenerSetting $record) => match (
                         WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                             ->where('website_id', $this->website_id)
                             ->exists()
                     ) {
-                        true => match(
+                        true => match (
                             WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                                 ->where('website_id', $this->website_id)
                                 ->first()
@@ -86,16 +86,16 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                     ->action(function (ShortenerSetting $record) {
                         $website = Website::find($this->website_id);
 
-                        if(WebsiteShortenerSetting::where('shortener_settings_id', $record->id)->where('website_id', $this->website_id)->exists()) {
+                        if (WebsiteShortenerSetting::where('shortener_settings_id', $record->id)->where('website_id', $this->website_id)->exists()) {
                             $websiteShortenerSetting = WebsiteShortenerSetting::where('shortener_settings_id', $record->id)->where('website_id', $this->website_id)->first();
 
-                            if($websiteShortenerSetting->status) {
+                            if ($websiteShortenerSetting->status) {
                                 $websiteShortenerSettingsUnderThisOne = WebsiteShortenerSetting::where('website_id', $this->website_id)
                                     ->where('priority', '>', $websiteShortenerSetting->priority)
                                     ->where('priority', '<', 999999)
                                     ->orderBy('priority', 'desc')
                                     ->get();
-                                
+
                                 foreach ($websiteShortenerSettingsUnderThisOne as $setting) {
                                     $setting->priority = $setting->priority - 1;
 
@@ -111,7 +111,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                                     ->priority + 1;
                             }
 
-                            $websiteShortenerSetting->status = !$websiteShortenerSetting->status;
+                            $websiteShortenerSetting->status = ! $websiteShortenerSetting->status;
 
                             $websiteShortenerSetting->save();
 
@@ -119,7 +119,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                                 ->title('Success')
                                 ->icon('heroicon-o-check-circle')
                                 ->success()
-                                ->body($record->shortener->name . ($websiteShortenerSetting->status ? ' has been enabled' : ' has been disabled') . ' for ' . $website->name)
+                                ->body($record->shortener->name.($websiteShortenerSetting->status ? ' has been enabled' : ' has been disabled').' for '.$website->name)
                                 ->send();
                         } else {
                             $websiteShortenerSetting = new WebsiteShortenerSetting;
@@ -134,7 +134,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                                 ->title('Success')
                                 ->icon('heroicon-o-check-circle')
                                 ->success()
-                                ->body($record->shortener->name . ' has been enabled' . ' for ' . $website->name)
+                                ->body($record->shortener->name.' has been enabled'.' for '.$website->name)
                                 ->send();
                         }
                     }),
@@ -146,7 +146,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         1 => 'primary',
                         0 => 'gray'
                     })
-                    ->disabled(fn (ShortenerSetting $record) => !$record->status)
+                    ->disabled(fn (ShortenerSetting $record) => ! $record->status)
                     ->action(function (ShortenerSetting $record) {
                         $websiteShortenerSetting = WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                             ->where('website_id', $this->website_id)
@@ -176,7 +176,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         1 => 'primary',
                         0 => 'gray'
                     })
-                    ->disabled(fn (ShortenerSetting $record) => !$record->status)
+                    ->disabled(fn (ShortenerSetting $record) => ! $record->status)
                     ->action(function (ShortenerSetting $record) {
                         $websiteShortenerSetting = WebsiteShortenerSetting::where('shortener_settings_id', $record->id)
                             ->where('website_id', $this->website_id)

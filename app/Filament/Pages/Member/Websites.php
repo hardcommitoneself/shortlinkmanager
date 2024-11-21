@@ -20,20 +20,19 @@ TODO:  Add Error message for duplicate URL on Website Edit
 namespace App\Filament\Pages\Member;
 
 use App\Models\Website;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\View;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Table;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Notifications\Notification;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
 class Websites extends Page implements HasTable
@@ -50,7 +49,7 @@ class Websites extends Page implements HasTable
 
     public function mount()
     {
-        abort_if(!Auth::user()->can('view websites'), 403);
+        abort_if(! Auth::user()->can('view websites'), 403);
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -74,7 +73,7 @@ class Websites extends Page implements HasTable
                     ->label('API Key')
                     ->badge()
                     ->copyable()
-                    ->copyMessage('API Key copied')
+                    ->copyMessage('API Key copied'),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -90,7 +89,7 @@ class Websites extends Page implements HasTable
                             ->url()
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('https://google.com')
+                            ->placeholder('https://google.com'),
                     ])
                     ->action(function (array $data): void {
                         try {
@@ -112,7 +111,7 @@ class Websites extends Page implements HasTable
                                 ->body($th->getCode() == 23000 ? 'Unable to add, duplicate website.' : $th->getMessage())
                                 ->send();
                         }
-                    })
+                    }),
             ])
             ->actions([
                 Action::make('setting')
@@ -123,7 +122,7 @@ class Websites extends Page implements HasTable
                         return [
                             View::make('filament.components.user-shortener-settings')
                                 ->viewData([
-                                    'website_id' => $record->id
+                                    'website_id' => $record->id,
                                 ]),
                         ];
                     })
@@ -139,7 +138,7 @@ class Websites extends Page implements HasTable
                             ->maxLength(255),
                         TextInput::make('url')
                             ->label('URL')
-                            ->readOnly()
+                            ->readOnly(),
                     ])
                     ->successNotification(function (array $data) {
                         Notification::make()
@@ -163,10 +162,9 @@ class Websites extends Page implements HasTable
                             ->title('Website deleted')
                             ->icon('heroicon-o-check-circle')
                             ->success()
-                            ->body( $record->name.' deleted successfully')
+                            ->body($record->name.' deleted successfully')
                             ->send();
-                    })
+                    }),
             ]);
     }
 }
-

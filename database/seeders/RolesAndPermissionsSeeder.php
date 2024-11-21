@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -39,7 +38,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view links',
             'view quick-link',
             'view full-page-script',
-            'view developers-api'
+            'view developers-api',
         ]);
 
         $user->givePermissionTo([
@@ -49,7 +48,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'view links',
             'view quick-link',
             'view full-page-script',
-            'view developers-api'
+            'view developers-api',
         ]);
     }
 }
