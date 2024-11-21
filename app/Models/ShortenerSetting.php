@@ -46,6 +46,7 @@ class ShortenerSetting extends Model
             ->select([
                 'shortener_settings.id as id',
                 'shortener_settings.shortener_id as shortener_id',
+                'shortener_settings.views as views',
                 DB::raw('IFNULL(website_shortener_settings.status, false) as status'),
                 DB::raw('IFNULL(website_shortener_settings.priority, 1000000) as priority'),
             ]);
