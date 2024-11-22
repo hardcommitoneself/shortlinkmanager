@@ -31,3 +31,29 @@ if (! function_exists('fix_withdraw_format')) {
         return $withdraw;
     }
 }
+
+if (! function_exists('formatFinalShortenedUrl')) {
+    function formatFinalShortenedUrl($url): string
+    {
+        return config('app.url').'/public/r/'.$url;
+    }
+}
+
+if (! function_exists('normalizeHost')) {
+    function normalizeHost($host)
+    {
+        // Convert to lowercase
+        $host = strtolower($host);
+        // Remove the `www.` prefix if it exists
+        $host = preg_replace('/^www\./', '', $host);
+
+        return $host;
+    }
+}
+
+if (! function_exists('areHostsEqual')) {
+    function areHostsEqual($host1, $host2)
+    {
+        return normalizeHost($host1) === normalizeHost($host2);
+    }
+}

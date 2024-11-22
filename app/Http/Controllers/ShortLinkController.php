@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\ShortLink;
 use App\Models\Website;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 class ShortLinkController extends Controller
@@ -16,9 +17,9 @@ class ShortLinkController extends Controller
         $alias = $request->query('alias');
 
         // check if the api key is validate
-        if(!Website::where('api_key', $apiKey)->exists()) {
+        if (! Website::where('api_key', $apiKey)->exists()) {
             return response()->json([
-                'error'=> 'invalid api key'
+                'error' => 'invalid api key',
             ], 401);
         }
 
@@ -29,9 +30,9 @@ class ShortLinkController extends Controller
         $website = Website::where('api_key', $apiKey)->first();
         $websiteHost = parse_url($website->url)['host'] ?? null;
 
-        if($host !== $websiteHost) {
+        if (! areHostsEqual($host, $websiteHost)) {
             return response()->json([
-                'error'=> 'unmatched url'
+                'error' => 'unmatched url',
             ], 401);
         }
 
@@ -49,7 +50,7 @@ class ShortLinkController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'shortenedUrl' => config('app.url') . '/r/' . $shortUrl
+            'shortenedUrl' => config('app.url').'/r/'.$shortUrl,
         ], 201);
     }
 
@@ -60,18 +61,49 @@ class ShortLinkController extends Controller
         $website = $shortLink->website;
         $websiteShortenerSettings = $website->websiteShortenerSettings;
 
-        foreach ($websiteShortenerSettings as $websiteShortenerSetting => $value) {
+        $isUnvisitedShortenerExist = false;
+
+        foreach ($websiteShortenerSettings as $key => $websiteShortenerSetting) {
             $countOfVisits = $websiteShortenerSetting->count_visits;
+
             $views = $websiteShortenerSetting->shortener_setting->views;
 
-            if($countOfVisits > $views) {
+            if ($countOfVisits > $views) {
                 continue;
             }
 
+            $isUnvisitedShortenerExist = true;
+
+            $shortenerAPILink = $websiteShortenerSetting->shortener_setting->shortener->api_link;
             $shortenerAPIKey = $websiteShortenerSetting->shortener_setting->api_key;
-            
+            $shortenerUrl = $shortLink->original_url;
+
+            $finalAPILink = str_replace(['{apikey}', '{url}'], [$shortenerAPIKey, $shortenerUrl], $shortenerAPILink);
+
+            try {
+                $response = Http::get($finalAPILink);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    // increase the view count & save
+                    $websiteShortenerSetting->count_visits++;
+                    $websiteShortenerSetting->save();
+
+                    // check the result and redirect user to the shortened url
+                } elseif ($response->failed()) {
+                    return response()->json(['error' => 'Failed to fetch data'], 500);
+                }
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Something went wrong', 'message' => $e->getMessage()], 500);
+            }
         }
 
-        return response()->json(['message' => 'Not Found'], 404);
+        // if the user visits all shorteners he setup for this website, then we will redirect the user to the original url.
+        if (! $isUnvisitedShortenerExist) {
+            $originalUrl = $shortLink->original_url;
+
+            return redirect($originalUrl);
+        }
     }
 }

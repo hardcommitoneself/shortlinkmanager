@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShortLinkController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +18,6 @@ Route::get('/shorten', [ShortLinkController::class, 'create'])->name('shorten');
 Route::get('/r/{shortUrl}', [ShortLinkController::class, 'redirect'])->name('redirect-shorturl');
 Route::get('/test', function () {
     return json_encode([
-        'message' => 'test'
+        'message' => 'test',
     ]);
 });
