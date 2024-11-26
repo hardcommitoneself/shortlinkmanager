@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ShortLink;
 use App\Models\Website;
+use App\Models\WebsiteShortenerSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use GuzzleHttp\Client;
 
 class ShortLinkController extends Controller
 {
@@ -60,7 +62,9 @@ class ShortLinkController extends Controller
         // Find the original URL based on the short URL
         $shortLink = ShortLink::where('short_url', $shortUrl)->first();
         $website = $shortLink->website;
-        $websiteShortenerSettings = $website->websiteShortenerSettings;
+        $websiteShortenerSettings = WebsiteShortenerSetting::where('website_id', $website->id)
+            ->where('status', 1)
+            ->get();
 
         $isUnvisitedShortenerExist = false;
 
@@ -82,17 +86,20 @@ class ShortLinkController extends Controller
             $finalAPILink = str_replace(['{apikey}', '{url}'], [$shortenerAPIKey, $shortenerUrl], $shortenerAPILink);
 
             try {
-                $response = Http::get($finalAPILink);
+                $client = new Client();
+                
+                $response = $client->get($finalAPILink);
 
-                if ($response->successful()) {
-                    $data = $response->json();
+                if ($response->getStatusCode() === 200) {
+                    $data = json_decode($response->getBody(), true);
 
                     // increase the view count & save
                     $websiteShortenerSetting->count_visits++;
                     $websiteShortenerSetting->save();
 
                     // check the result and redirect user to the shortened url
-                } elseif ($response->failed()) {
+                    return redirect($data['shortenedUrl']);
+                } else {
                     return response()->json(['error' => 'Failed to fetch data'], 500);
                 }
             } catch (\Exception $e) {
