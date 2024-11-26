@@ -48,7 +48,7 @@ class UserShortenerSetting extends Component implements HasForms, HasTable
                         },
                         false => 'gray'
                     }),
-                TextInputColumn::make('views')
+                TextInputColumn::make('views'),
             ])
             ->defaultSort('priority')
             ->actions([

@@ -27,6 +27,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
@@ -145,6 +146,20 @@ class Shorteners extends Page implements HasTable
                         '0' => 'Disabled',
                     ])
                     ->default('1'),
+                SelectFilter::make('tags')
+                    ->multiple()
+                    ->options([
+                        'active' => 'Active',
+                        'scam' => 'Scam',
+                        'closed' => 'Closed',
+                    ])
+                    ->query(function (Builder $query, $state): Builder {
+                        if (empty($state['values'])) {
+                            return $query;
+                        }
+
+                        return $query->whereJsonContains('tags', $state['values']);
+                    }),
             ])
             ->actions([
                 Action::make('activate')

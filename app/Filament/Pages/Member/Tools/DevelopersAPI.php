@@ -12,8 +12,8 @@
 
 namespace App\Filament\Pages\Member\Tools;
 
-use App\Models\Website;
 use App\Actions\SectionHeaderSelectAction;
+use App\Models\Website;
 use CodeWithDennis\SimpleAlert\Components\Forms\SimpleAlert;
 use Filament\Actions\SelectAction;
 use Filament\Forms\Components\Actions\Action;
@@ -121,12 +121,12 @@ class DevelopersAPI extends Page implements HasForms
     {
         return $form
             ->schema([
-                Section::make('Developers API - ' . Website::find($this->currentWebsiteId)?->name ?? null)
+                Section::make('Developers API - '.Website::find($this->currentWebsiteId)?->name ?? null)
                     ->headerActions([
                         SectionHeaderSelectAction::make('currentWebsiteId')
                             ->label('Select Website')
-                            ->options(Website::myWebsites()->pluck('name', 'id')->toArray())
-                        ])
+                            ->options(Website::myWebsites()->pluck('name', 'id')->toArray()),
+                    ])
                     ->reactive()
                     ->schema([
                         TextInput::make('api_key')
@@ -199,7 +199,7 @@ class DevelopersAPI extends Page implements HasForms
                                     <b>NOTE</b> api & url are required fields and the other fields like alias, format & type are optional.
                                 </p>
                                 '
-                            ))
+                            )),
                     ]),
                 Section::make('Usage of API')
                     ->schema([

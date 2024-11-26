@@ -3,27 +3,20 @@
 namespace App\Filament\Pages\Member\Profile;
 
 use App\Models\User;
-use Closure;
-use Filament\Pages\Page;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
-use Filament\Forms\Get;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Actions\EditAction;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class Settings extends Page implements HasForms
 {
@@ -46,7 +39,7 @@ class Settings extends Page implements HasForms
         return [
             'changeEmailForm',
             'changePasswordForm',
-            'deleteForm'
+            'deleteForm',
         ];
     }
 
@@ -79,13 +72,13 @@ class Settings extends Page implements HasForms
 
     protected function getCreateFormAction(): Action
     {
-    return parent::getCreateFormAction()
-        ->submit(form: null) // set the form data to null, prevent save process
-        ->requiresConfirmation()
-        ->action(function() {
-            $this->closeActionModal(); // Close btn
-            $this->create();  // process the create method
-        });
+        return parent::getCreateFormAction()
+            ->submit(form: null) // set the form data to null, prevent save process
+            ->requiresConfirmation()
+            ->action(function () {
+                $this->closeActionModal(); // Close btn
+                $this->create();  // process the create method
+            });
     }
 
     public function changeEmailForm(Form $form): Form
@@ -97,17 +90,18 @@ class Settings extends Page implements HasForms
                     ->description(auth()->user()->email)
                     ->headerActions([
                         Action::make('test')
-                        ->icon('')
-                        ->button()
-                        ->action(function (Set $set) {
+                            ->icon('')
+                            ->button()
+                            ->action(function (Set $set) {
 
-                            $this->refreshFormData([
-                                'section_open',
-                            ]);
-                            $set('section_open', 0);})
-                            //->action(function (Set $set) { $set('section_open', 1); }),
-                            //->hidden(fn (Get $get): bool => $get('section_open') != 0),
-                        ])
+                                $this->refreshFormData([
+                                    'section_open',
+                                ]);
+                                $set('section_open', 0);
+                            }),
+                        //->action(function (Set $set) { $set('section_open', 1); }),
+                        //->hidden(fn (Get $get): bool => $get('section_open') != 0),
+                    ])
                     ->schema([
                         TextInput::make('email')
                             ->label('New email address')
@@ -121,7 +115,7 @@ class Settings extends Page implements HasForms
                             ->password()
                             ->required()
                             ->currentPassword()
-                            ->placeholder('Enter your password')
+                            ->placeholder('Enter your password'),
                     ])
                     ->footerActions([
                         Action::make('Save')
@@ -131,7 +125,7 @@ class Settings extends Page implements HasForms
                         Action::make('Cance')
                             ->action(function (User $user) {
                                 dd($user);
-                            })
+                            }),
                     ])
                     ->collapsed(fn (Get $get): bool => $get('section_open') != 1)
                     ->collapsible(),
@@ -166,7 +160,7 @@ class Settings extends Page implements HasForms
                                     ->required()
                                     ->dehydrated(false),
                             ])
-                            ->modalWidth(MaxWidth::Large)
+                            ->modalWidth(MaxWidth::Large),
 
                     ])
                     ->collapsed(),
@@ -184,7 +178,7 @@ class Settings extends Page implements HasForms
                             ->button()
                             ->label('Delete Account')
                             ->icon('')
-                            ->color('danger')
+                            ->color('danger'),
                     ])
                     ->collapsed(),
             ]);
