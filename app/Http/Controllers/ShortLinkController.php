@@ -24,18 +24,19 @@ class ShortLinkController extends Controller
         }
 
         // check the url is related to the proper website
-        $parsedUrl = parse_url($url);
-        $host = $parsedUrl['host'] ?? null;
+        // $parsedUrl = parse_url($url);
+        // $host = $parsedUrl['host'] ?? null;
 
+        // $websiteHost = parse_url($website->url)['host'] ?? null;
+        
+        // if (! areHostsEqual($host, $websiteHost)) {
+        //     return response()->json([
+        //         'error' => 'unmatched url',
+        //     ], 401);
+        // }
+        
         $website = Website::where('api_key', $apiKey)->first();
-        $websiteHost = parse_url($website->url)['host'] ?? null;
-
-        if (! areHostsEqual($host, $websiteHost)) {
-            return response()->json([
-                'error' => 'unmatched url',
-            ], 401);
-        }
-
+        
         do {
             $shortUrl = Str::random(6);
         } while (ShortLink::where('short_url', $shortUrl)->exists());
