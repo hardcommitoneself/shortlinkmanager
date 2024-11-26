@@ -11,12 +11,18 @@
 namespace App\Filament\Pages\Member;
 
 use App\Models\ShortLink;
+use App\Tables\Columns\ShortLinkColumn;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\EditAction;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Forms\Components\TextInput;
 
 class Links extends Page implements HasTable
 {
@@ -45,17 +51,36 @@ class Links extends Page implements HasTable
         return $table
             ->query(ShortLink::myShortLinks())
             ->columns([
-                TextColumn::make('short_url')
+                ShortLinkColumn::make('short_url')
                     ->label('Shortened URL')
                     ->getStateUsing(fn (ShortLink $shortLink) => formatFinalShortenedUrl($shortLink->short_url))
-                    ->url(fn (ShortLink $shortLink) => formatFinalShortenedUrl($shortLink->short_url))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('original_url')
-                    ->label('Original URL')
-                    ->url(fn (ShortLink $shortLink) => $shortLink->original_url)
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('created_at')
+            ])
+            ->actions([
+                EditAction::make('Edit')
+                    ->iconButton()
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('warning')
+                    ->modalWidth(MaxWidth::Large)
+                    ->form([
+                        TextInput::make('original_url')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+                DeleteAction::make('Delete')
+                    ->iconButton()
+                    ->icon('heroicon-o-trash')
+                    ->requiresConfirmation()
+                    ->successNotification(function () {
+                        Notification::make()
+                            ->title('Shortened url deleted')
+                            ->icon('heroicon-o-check-circle')
+                            ->success()
+                            ->body('Shortened url has been deleted successfully')
+                            ->send();
+                    })
             ]);
     }
 }
