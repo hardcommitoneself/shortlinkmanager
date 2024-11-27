@@ -30,8 +30,7 @@ class Settings extends Page implements HasForms
 
     public function mount()
     {
-        // $someModel = Email::find($state);
-        // $set('section_open', $someModel?->default_option);
+
     }
 
     protected function getForms(): array
@@ -43,42 +42,9 @@ class Settings extends Page implements HasForms
         ];
     }
 
-    protected function getSaveFormAction(): Action
+    public function collapseSection(): string
     {
-        return parent::getSaveFormAction()
-            ->label('Update User')
-            ->icon('heroicon-o-check-circle')
-            ->iconPosition(IconPosition::Before)
-            ->color('success');
-    }
-
-    // Customize the "Cancel" button
-    protected function getCancelFormAction(): Action
-    {
-        return parent::getCancelFormAction()
-            ->label('Go Back')
-            ->icon('heroicon-o-arrow-left')
-            ->color('gray');
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Actions\Action::make('Update')
-                ->color('primary')
-                ->submit('Update'),
-        ];
-    }
-
-    protected function getCreateFormAction(): Action
-    {
-        return parent::getCreateFormAction()
-            ->submit(form: null) // set the form data to null, prevent save process
-            ->requiresConfirmation()
-            ->action(function () {
-                $this->closeActionModal(); // Close btn
-                $this->create();  // process the create method
-            });
+        return $this->Section::collapsed(0);
     }
 
     public function changeEmailForm(Form $form): Form
@@ -90,18 +56,17 @@ class Settings extends Page implements HasForms
                     ->description(auth()->user()->email)
                     ->headerActions([
                         Action::make('test')
-                            ->icon('')
-                            ->button()
-                            ->action(function (Set $set) {
+                        ->icon('')
+                        ->button()
+                        ->action(function (Set $set) {
 
-                                $this->refreshFormData([
-                                    'section_open',
-                                ]);
-                                $set('section_open', 0);
-                            }),
-                        //->action(function (Set $set) { $set('section_open', 1); }),
-                        //->hidden(fn (Get $get): bool => $get('section_open') != 0),
-                    ])
+                            $this->refreshFormData([
+                                'section_open',
+                            ]);
+                            $set('section_open', 0);})
+                            //->action(function (Set $set) { $set('section_open', 1); }),
+                            //->hidden(fn (Get $get): bool => $get('section_open') != 0),
+                        ])
                     ->schema([
                         TextInput::make('email')
                             ->label('New email address')
@@ -118,7 +83,7 @@ class Settings extends Page implements HasForms
                             ->placeholder('Enter your password'),
                     ])
                     ->footerActions([
-                        Action::make('Save')
+                        Action::make('Change Email')
                             ->action(function (User $user) {
                                 dd($user);
                             }),
@@ -142,26 +107,35 @@ class Settings extends Page implements HasForms
                         Action::make('edit')
                             ->label('Change Password')
                             ->icon('')
-                            ->form([
-                                TextInput::make('Current password')
-                                    ->password()
-                                    ->required()
-                                    ->currentPassword(),
-                                TextInput::make('password')
-                                    ->password()
-                                    ->required()
-                                    ->rule(Password::default())
-                                    ->autocomplete('new-password')
-                                    ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
-                                    ->live(debounce: 500)
-                                    ->same('passwordConfirmation'),
-                                TextInput::make('passwordConfirmation')
-                                    ->password()
-                                    ->required()
-                                    ->dehydrated(false),
-                            ])
-                            ->modalWidth(MaxWidth::Large),
-
+                    ])
+                    ->schema([
+                        TextInput::make('Current password')
+                            ->password()
+                            ->required()
+                            ->currentPassword(),
+                            //->helperText(new HtmlString('<a href="/password-reset/request">Forgot your password?</a>'))
+                            //->hint(new HtmlString('<a href="/password-reset/request">Forgotten your password?</a>')),
+                        TextInput::make('password')
+                            ->password()
+                            ->required()
+                            ->rule(Password::default())
+                            ->autocomplete('new-password')
+                            ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+                            ->live(debounce: 500)
+                            ->same('passwordConfirmation'),
+                        TextInput::make('passwordConfirmation')
+                            ->password()
+                            ->required()
+                            ->dehydrated(false),
+                    ])
+                    ->footerActions([
+                        Action::make('Change Password')
+                            ->action(function (User $user) {
+                                dd($user);
+                            }),
+                        Action::make('Cancel')
+                            ->color('gray')
+                            ->action(function (Set $set) { $set('section_open', 1); }),
                     ])
                     ->collapsed(),
             ]);
@@ -180,7 +154,10 @@ class Settings extends Page implements HasForms
                             ->icon('')
                             ->color('danger'),
                     ])
-                    ->collapsed(),
+                    ->schema([])
+                    //->form([])
+                    ->footerActions([ ])
+                    //->collapsed(),
             ]);
     }
 }
