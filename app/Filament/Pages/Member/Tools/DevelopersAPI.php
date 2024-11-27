@@ -66,7 +66,7 @@ class DevelopersAPI extends Page implements HasForms
             $this->developerAPIFormData = [
                 'name' => $website->name,
                 'api_key' => $website->api_key,
-                'request_link' => config('app.url').'/api?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias',
+                'request_link' => config('app.url').'/shorten?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias',
                 'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
                 'request_link_for_result_as_text' => config('app.url').'/api?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias&format=text',
             ];
@@ -76,7 +76,7 @@ class DevelopersAPI extends Page implements HasForms
             $this->developerAPIFormData = [
                 'name' => 'Undefined',
                 'api_key' => 'Undefined',
-                'request_link' => config('app.url').'/api?api='.'undefined'.'&url=yourdestinationlink.com&alias=CustomAlias',
+                'request_link' => config('app.url').'/shorten?api='.'undefined'.'&url=yourdestinationlink.com&alias=CustomAlias',
                 'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
                 'request_link_for_result_as_text' => config('app.url').'/api?api='.'undefined'.'&url=yourdestinationlink.com&alias=CustomAlias&format=text',
             ];
@@ -111,7 +111,7 @@ class DevelopersAPI extends Page implements HasForms
         $this->developerAPIFormData = [
             'name' => $website->name,
             'api_key' => $website->api_key,
-            'request_link' => config('app.url').'/api?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias',
+            'request_link' => config('app.url').'/shorten?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias',
             'json_response' => '{"status":"success","shortenedUrl":""https:\/\/get4links.com\/xxxxx""}',
             'request_link_for_result_as_text' => config('app.url').'/api?api='.$website->api_key.'&url=yourdestinationlink.com&alias=CustomAlias&format=text',
         ];

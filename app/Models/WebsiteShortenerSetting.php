@@ -16,7 +16,7 @@ class WebsiteShortenerSetting extends Model
 
     public function shortener_setting(): BelongsTo
     {
-        return $this->belongsTo(ShortenerSetting::class);
+        return $this->belongsTo(ShortenerSetting::class, 'shortener_settings_id');
     }
 
     public function website(): BelongsTo
