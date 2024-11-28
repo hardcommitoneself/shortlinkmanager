@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\ShortLink;
+use App\Models\Visit;
 use App\Models\Website;
 use App\Models\WebsiteShortenerSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use GuzzleHttp\Client;
+use Stevebauman\Location\Facades\Location;
 
 class ShortLinkController extends Controller
 {
@@ -57,7 +59,7 @@ class ShortLinkController extends Controller
         ], 201);
     }
 
-    public function redirect($shortUrl)
+    public function redirect(Request $request, $shortUrl)
     {
         // Find the original URL based on the short URL
         $shortLink = ShortLink::where('short_url', $shortUrl)->first();
@@ -68,6 +70,32 @@ class ShortLinkController extends Controller
 
         $isUnvisitedShortenerExist = false;
 
+        // client IP
+        $ip = $request->ip();
+        $location = Location::get('69.197.184.114');
+
+        // check if the request contains token
+        if($request->has('token')) {
+            $visitQuery = Visit::where('token', $request->get('token'));
+
+            if($visitQuery->exists()) {
+                $visit = $visitQuery->get();
+
+                // check ip is same
+                if($visit->ip === $ip) {
+                    $visitQuery->update([
+                        'is_completed' => true
+                    ]);
+
+                    return redirect($shortLink->original_url);
+                } else {
+                    return response()->json(['error' => 'Unmatched IP'], 500);
+                }
+            }
+        }
+
+        // if the request does not contain token, then proceed the normal redirect funcationality
+        // if there is no website shortener settings, then just redirect user to the original url
         foreach ($websiteShortenerSettings as $key => $websiteShortenerSetting) {
             $countOfVisits = $websiteShortenerSetting->count_visits;
 
@@ -79,9 +107,11 @@ class ShortLinkController extends Controller
 
             $isUnvisitedShortenerExist = true;
 
+            $token = Str::orderedUuid();
+
             $shortenerAPILink = $websiteShortenerSetting->shortener_setting->shortener->api_link;
             $shortenerAPIKey = $websiteShortenerSetting->shortener_setting->api_key;
-            $shortenerUrl = $shortLink->original_url;
+            $shortenerUrl = formatFinalShortenedUrl($shortUrl) . '?token=' . $token;
 
             $finalAPILink = str_replace(['{apikey}', '{url}'], [$shortenerAPIKey, $shortenerUrl], $shortenerAPILink);
 
@@ -96,6 +126,21 @@ class ShortLinkController extends Controller
                     // increase the view count & save
                     $websiteShortenerSetting->count_visits++;
                     $websiteShortenerSetting->save();
+
+                    // create new visit
+                    $visit = new Visit;
+
+                    $visit->ip = $ip;
+                    $visit->country = $location->countryName;
+                    $visit->country_code = $location->countryCode;
+                    $visit->region = $location->regionName;
+                    $visit->city = $location->cityName;
+                    $visit->zip = $location->zipCode;
+                    $visit->time_zone = $location->timezone;
+                    $visit->token = $location->$token;
+                    $visit->short_link_id = $shortLink->id;
+
+                    $visit->save();
 
                     // check the result and redirect user to the shortened url
                     return redirect($data['shortenedUrl']);
