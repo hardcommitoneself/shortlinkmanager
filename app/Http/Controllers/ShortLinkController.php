@@ -14,6 +14,13 @@ use Stevebauman\Location\Facades\Location;
 
 class ShortLinkController extends Controller
 {
+    public function view(string $shortUrl)
+    {
+        return view('redirect', [
+            'shortUrl' => formatFinalShortenedUrl($shortUrl)
+        ]);
+    }
+
     public function create(Request $request)
     {
         $apiKey = $request->query('api');

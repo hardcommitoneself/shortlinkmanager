@@ -32,6 +32,13 @@ if (! function_exists('fix_withdraw_format')) {
     }
 }
 
+if (! function_exists('formatFinalShortenedUrlView')) {
+    function formatFinalShortenedUrlView($url): string
+    {
+        return config('app.url').'/v/'.$url;
+    }
+}
+
 if (! function_exists('formatFinalShortenedUrl')) {
     function formatFinalShortenedUrl($url): string
     {

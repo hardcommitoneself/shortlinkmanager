@@ -53,7 +53,7 @@ class Links extends Page implements HasTable
             ->columns([
                 ShortLinkColumn::make('short_url')
                     ->label('Shortened URL')
-                    ->getStateUsing(fn (ShortLink $shortLink) => formatFinalShortenedUrl($shortLink->short_url))
+                    ->getStateUsing(fn (ShortLink $shortLink) => formatFinalShortenedUrlView($shortLink->short_url))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at'),
