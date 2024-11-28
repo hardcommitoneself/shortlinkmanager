@@ -18,12 +18,10 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 
@@ -126,7 +124,7 @@ class Users extends Page implements HasTable
                     ->modalHeading(fn (User $record) => new HtmlString('Edit '.$record->name))
                     ->modalWidth(MaxWidth::Large)
                     ->fillForm(fn (User $record) => array_merge($record->toArray(), [
-                        'roles' => $record->roles->pluck('name')
+                        'roles' => $record->roles->pluck('name'),
                     ]))
                     ->form([
                         TextInput::make('name')
@@ -142,13 +140,13 @@ class Users extends Page implements HasTable
                             ->options([
                                 'Admin' => 'Admin',
                                 'Moderator' => 'Moderator',
-                                'User' => 'User'
-                            ])
+                                'User' => 'User',
+                            ]),
                     ])
                     ->action(function (User $record, array $data) {
                         $record->update([
                             'name' => $data['name'],
-                            'email' => $data['email']
+                            'email' => $data['email'],
                         ]);
 
                         $updatedRoles = $data['roles'];

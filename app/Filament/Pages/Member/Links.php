@@ -12,17 +12,17 @@ namespace App\Filament\Pages\Member;
 
 use App\Models\ShortLink;
 use App\Tables\Columns\ShortLinkColumn;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\EditAction;
-use Filament\Support\Enums\MaxWidth;
-use Filament\Forms\Components\TextInput;
 
 class Links extends Page implements HasTable
 {
@@ -56,7 +56,7 @@ class Links extends Page implements HasTable
                     ->getStateUsing(fn (ShortLink $shortLink) => formatFinalShortenedUrl($shortLink->short_url))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('created_at')
+                TextColumn::make('created_at'),
             ])
             ->actions([
                 EditAction::make('Edit')
@@ -80,7 +80,7 @@ class Links extends Page implements HasTable
                             ->success()
                             ->body('Shortened url has been deleted successfully')
                             ->send();
-                    })
+                    }),
             ]);
     }
 }

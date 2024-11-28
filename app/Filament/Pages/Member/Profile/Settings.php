@@ -3,7 +3,6 @@
 namespace App\Filament\Pages\Member\Profile;
 
 use App\Models\User;
-use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -13,7 +12,6 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -28,10 +26,7 @@ class Settings extends Page implements HasForms
 
     protected static ?string $slug = 'member/profile/settings';
 
-    public function mount()
-    {
-
-    }
+    public function mount() {}
 
     protected function getForms(): array
     {
@@ -56,17 +51,18 @@ class Settings extends Page implements HasForms
                     ->description(auth()->user()->email)
                     ->headerActions([
                         Action::make('test')
-                        ->icon('')
-                        ->button()
-                        ->action(function (Set $set) {
+                            ->icon('')
+                            ->button()
+                            ->action(function (Set $set) {
 
-                            $this->refreshFormData([
-                                'section_open',
-                            ]);
-                            $set('section_open', 0);})
-                            //->action(function (Set $set) { $set('section_open', 1); }),
-                            //->hidden(fn (Get $get): bool => $get('section_open') != 0),
-                        ])
+                                $this->refreshFormData([
+                                    'section_open',
+                                ]);
+                                $set('section_open', 0);
+                            }),
+                        //->action(function (Set $set) { $set('section_open', 1); }),
+                        //->hidden(fn (Get $get): bool => $get('section_open') != 0),
+                    ])
                     ->schema([
                         TextInput::make('email')
                             ->label('New email address')
@@ -106,15 +102,15 @@ class Settings extends Page implements HasForms
                     ->headerActions([
                         Action::make('edit')
                             ->label('Change Password')
-                            ->icon('')
+                            ->icon(''),
                     ])
                     ->schema([
                         TextInput::make('Current password')
                             ->password()
                             ->required()
                             ->currentPassword(),
-                            //->helperText(new HtmlString('<a href="/password-reset/request">Forgot your password?</a>'))
-                            //->hint(new HtmlString('<a href="/password-reset/request">Forgotten your password?</a>')),
+                        //->helperText(new HtmlString('<a href="/password-reset/request">Forgot your password?</a>'))
+                        //->hint(new HtmlString('<a href="/password-reset/request">Forgotten your password?</a>')),
                         TextInput::make('password')
                             ->password()
                             ->required()
@@ -135,7 +131,9 @@ class Settings extends Page implements HasForms
                             }),
                         Action::make('Cancel')
                             ->color('gray')
-                            ->action(function (Set $set) { $set('section_open', 1); }),
+                            ->action(function (Set $set) {
+                                $set('section_open', 1);
+                            }),
                     ])
                     ->collapsed(),
             ]);
@@ -156,8 +154,8 @@ class Settings extends Page implements HasForms
                     ])
                     ->schema([])
                     //->form([])
-                    ->footerActions([ ])
-                    //->collapsed(),
+                    ->footerActions([]),
+                //->collapsed(),
             ]);
     }
 }

@@ -6,10 +6,10 @@ use App\Models\ShortLink;
 use App\Models\Visit;
 use App\Models\Website;
 use App\Models\WebsiteShortenerSetting;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use GuzzleHttp\Client;
 use Stevebauman\Location\Facades\Location;
 
 class ShortLinkController extends Controller
@@ -32,15 +32,15 @@ class ShortLinkController extends Controller
         // $host = $parsedUrl['host'] ?? null;
 
         // $websiteHost = parse_url($website->url)['host'] ?? null;
-        
+
         // if (! areHostsEqual($host, $websiteHost)) {
         //     return response()->json([
         //         'error' => 'unmatched url',
         //     ], 401);
         // }
-        
+
         $website = Website::where('api_key', $apiKey)->first();
-        
+
         do {
             $shortUrl = Str::random(6);
         } while (ShortLink::where('short_url', $shortUrl)->exists());
@@ -75,16 +75,16 @@ class ShortLinkController extends Controller
         $location = Location::get('69.197.184.114');
 
         // check if the request contains token
-        if($request->has('token')) {
+        if ($request->has('token')) {
             $visitQuery = Visit::where('token', $request->get('token'));
 
-            if($visitQuery->exists()) {
+            if ($visitQuery->exists()) {
                 $visit = $visitQuery->get();
 
                 // check ip is same
-                if($visit->ip === $ip) {
+                if ($visit->ip === $ip) {
                     $visitQuery->update([
-                        'is_completed' => true
+                        'is_completed' => true,
                     ]);
 
                     return redirect($shortLink->original_url);
@@ -111,7 +111,7 @@ class ShortLinkController extends Controller
 
             $shortenerAPILink = $websiteShortenerSetting->shortener_setting->shortener->api_link;
             $shortenerAPIKey = $websiteShortenerSetting->shortener_setting->api_key;
-            $shortenerUrl = formatFinalShortenedUrl($shortUrl) . '?token=' . $token;
+            $shortenerUrl = formatFinalShortenedUrl($shortUrl).'?token='.$token;
 
             $finalAPILink = str_replace(['{apikey}', '{url}'], [$shortenerAPIKey, $shortenerUrl], $shortenerAPILink);
 

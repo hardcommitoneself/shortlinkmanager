@@ -3,7 +3,6 @@
 namespace App\Tables\Columns;
 
 use Filament\Tables\Columns\Column;
-use Closure;
 
 class ShortLinkColumn extends Column
 {
