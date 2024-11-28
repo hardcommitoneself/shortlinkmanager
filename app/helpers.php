@@ -35,7 +35,7 @@ if (! function_exists('fix_withdraw_format')) {
 if (! function_exists('formatFinalShortenedUrl')) {
     function formatFinalShortenedUrl($url): string
     {
-        return config('app.url').'/public/r/'.$url;
+        return config('app.url').'/r/'.$url;
     }
 }
 

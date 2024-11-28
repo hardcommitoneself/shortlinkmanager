@@ -116,12 +116,10 @@ class ShortLinkController extends Controller
             $finalAPILink = str_replace(['{apikey}', '{url}'], [$shortenerAPIKey, $shortenerUrl], $shortenerAPILink);
 
             try {
-                $client = new Client();
-                
-                $response = $client->get($finalAPILink);
+                $response = Http::get($finalAPILink);
 
-                if ($response->getStatusCode() === 200) {
-                    $data = json_decode($response->getBody(), true);
+                if ($response->successful()) {
+                    $data = $response->json();
 
                     // increase the view count & save
                     $websiteShortenerSetting->count_visits++;
@@ -137,7 +135,7 @@ class ShortLinkController extends Controller
                     $visit->city = $location->cityName;
                     $visit->zip = $location->zipCode;
                     $visit->time_zone = $location->timezone;
-                    $visit->token = $location->$token;
+                    $visit->token = $token;
                     $visit->short_link_id = $shortLink->id;
 
                     $visit->save();
@@ -148,7 +146,7 @@ class ShortLinkController extends Controller
                     return response()->json(['error' => 'Failed to fetch data'], 500);
                 }
             } catch (\Exception $e) {
-                return response()->json(['error' => 'Something went wrong', 'message' => $e->getMessage()], 500);
+                return response()->json(['error' => 'Something went wrong', 'message' => $e->getMessage(), 'line' => $e->getLine()], 500);
             }
         }
 
