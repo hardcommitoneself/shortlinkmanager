@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ShortLinkController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,3 +12,4 @@
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/stats/{shortUrl}', [ShortLinkController::class, 'stats'])->name('shorturl-stats');

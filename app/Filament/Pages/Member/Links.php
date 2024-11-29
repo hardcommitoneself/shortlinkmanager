@@ -18,6 +18,7 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -56,9 +57,16 @@ class Links extends Page implements HasTable
                     ->getStateUsing(fn (ShortLink $shortLink) => formatFinalShortenedUrlView($shortLink->short_url))
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('visits_count')
+                    ->getStateUsing(fn (ShortLink $shortLink) => count($shortLink->visits)),
                 TextColumn::make('created_at'),
             ])
             ->actions([
+                Action::make('stats')
+                    ->iconButton()
+                    ->icon('heroicon-o-chart-bar')
+                    ->url(fn (ShortLink $shortLink) => route('shorturl-stats', $shortLink->short_url))
+                    ->openUrlInNewTab(),
                 EditAction::make('Edit')
                     ->iconButton()
                     ->icon('heroicon-o-pencil-square')

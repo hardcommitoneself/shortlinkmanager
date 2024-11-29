@@ -21,6 +21,11 @@ class ShortLinkController extends Controller
         ]);
     }
 
+    public function stats(string $shortUrl)
+    {
+        
+    }
+
     public function create(Request $request)
     {
         $apiKey = $request->query('api');
