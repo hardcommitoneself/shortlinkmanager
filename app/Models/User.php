@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Panel;
 
 class User extends Authenticatable
 {
@@ -51,6 +52,12 @@ class User extends Authenticatable
         static::created(function (User $user) {
             $user->assignRole('User');
         });
+    }
+
+    // for now, anybody can access to the panel, but once we are ready, we need to setup 2FA
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 
     public function websites(): HasMany
