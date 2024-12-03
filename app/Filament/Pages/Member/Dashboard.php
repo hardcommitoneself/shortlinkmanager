@@ -25,8 +25,6 @@ class Dashboard extends Page implements HasForms
 
     public function mount(): void
     {
-        dd(Auth::user()->can('view dashboard'));
-
         abort_if(! Auth::user()->can('view dashboard'), 403);
 
         $this->form->fill();
