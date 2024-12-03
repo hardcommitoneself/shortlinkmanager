@@ -88,23 +88,21 @@ class ShortLinkController extends Controller
 
         // check if the request contains token
         if ($request->has('token')) {
-            $visitQuery = Visit::where('token', $request->get('token'));
+            $visit = Visit::where('token', $request->get('token'))->first();
 
-            if ($visitQuery->exists()) {
-                $visit = $visitQuery->get();
-
+            if ($visit) {
                 // check ip is same
                 if ($visit->ip === $ip) {
-                    $visitQuery->update([
+                    $visit->update([
                         'is_completed' => true,
                     ]);
-
-                    $visitQuery->save();
 
                     return redirect($shortLink->original_url);
                 } else {
                     return response()->json(['error' => 'Unmatched IP'], 500);
                 }
+            } else {
+                return response()->json(['error' => 'Visit not found'], 404);
             }
         }
 
