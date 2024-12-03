@@ -99,6 +99,8 @@ class ShortLinkController extends Controller
                         'is_completed' => true,
                     ]);
 
+                    $visitQuery->save();
+
                     return redirect($shortLink->original_url);
                 } else {
                     return response()->json(['error' => 'Unmatched IP'], 500);
