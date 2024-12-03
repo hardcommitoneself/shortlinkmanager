@@ -17,13 +17,13 @@ class ShortLinkController extends Controller
     public function view(string $shortUrl)
     {
         return view('redirect', [
-            'shortUrl' => formatFinalShortenedUrl($shortUrl)
+            'shortUrl' => formatFinalShortenedUrl($shortUrl),
         ]);
     }
 
-    public function stats(string $shortUrl)
+    public function stats(string $shortUrl) 
     {
-        
+        return view('stats');
     }
 
     public function create(Request $request)
@@ -84,7 +84,7 @@ class ShortLinkController extends Controller
 
         // client IP
         $ip = $request->ip();
-        $location = Location::get('69.197.184.114');
+        $location = Location::get($ip);
 
         // check if the request contains token
         if ($request->has('token')) {
