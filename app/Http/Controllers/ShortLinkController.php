@@ -153,7 +153,9 @@ class ShortLinkController extends Controller
                     $visit->save();
 
                     // check the result and redirect user to the shortened url
-                    return redirect($data['shortenedUrl']);
+                    return view('redirect', [
+                        'shortUrl' => $data['shortenedUrl'],
+                    ]);
                 } else {
                     return response()->json(['error' => 'Failed to fetch data'], 500);
                 }
